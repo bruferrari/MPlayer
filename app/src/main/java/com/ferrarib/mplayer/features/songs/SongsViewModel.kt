@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.ferrarib.mplayer.data.repository.RecentlyPlayedRepository
 import com.ferrarib.mplayer.data.repository.SongRepository
 import com.ferrarib.mplayer.domain.model.Song
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,14 +12,17 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
 class SongsViewModel @Inject constructor(
-    private val repository: SongRepository
+    private val repository: SongRepository,
+    private val recentlyPlayedRepository: RecentlyPlayedRepository,
 ) : ViewModel() {
 
     private val _query = MutableStateFlow("")
@@ -30,8 +34,15 @@ class SongsViewModel @Inject constructor(
         .flatMapLatest { repository.search(it) }
         .cachedIn(viewModelScope)
 
+    val recentlyPlayed: StateFlow<List<Song>> = recentlyPlayedRepository.observe()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
     fun onQueryChange(query: String) {
         _query.value = query
+    }
+
+    fun onSongTapped(song: Song) {
+        recentlyPlayedRepository.add(song)
     }
 
     companion object {

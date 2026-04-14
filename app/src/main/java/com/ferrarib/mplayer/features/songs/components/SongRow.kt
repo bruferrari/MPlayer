@@ -38,7 +38,8 @@ fun SongRow(
     song: Song,
     onClick: () -> Unit,
     onViewAlbum: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    trailingContent: @Composable (() -> Unit)? = null,
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
 
@@ -74,6 +75,7 @@ fun SongRow(
                 overflow = TextOverflow.Ellipsis
             )
         }
+        trailingContent?.invoke()
         IconButton(onClick = { menuExpanded = true }) {
             Icon(
                 imageVector = Icons.Rounded.MoreVert,

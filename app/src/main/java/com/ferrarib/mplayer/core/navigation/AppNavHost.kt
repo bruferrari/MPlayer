@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.ferrarib.mplayer.features.player.PlayerScreen
 import com.ferrarib.mplayer.features.songs.SongsScreen
 import com.ferrarib.mplayer.features.splash.SplashScreen
 
@@ -42,8 +43,10 @@ fun AppNavHost(windowSizeClass: WindowSizeClass) {
             route = AppDestinations.PLAYER_ROUTE,
             arguments = listOf(navArgument(AppDestinations.ARG_TRACK_ID) { type = NavType.LongType })
         ) {
-            // Placeholder — Phase 3
-            Text(text = "Player — Phase 3")
+            PlayerScreen(
+                windowSizeClass = windowSizeClass,
+                onBack = { navController.popBackStack() },
+            )
         }
         composable(
             route = AppDestinations.ALBUM_ROUTE,

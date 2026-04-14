@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -42,12 +43,17 @@ fun SongsScreen(
 ) {
     val query by viewModel.query.collectAsStateWithLifecycle()
     val songs = viewModel.pagingData.collectAsLazyPagingItems()
+    val recentlyPlayed by viewModel.recentlyPlayed.collectAsStateWithLifecycle()
 
     SongListContent(
         query = query,
         songs = songs,
+        recentlyPlayed = recentlyPlayed,
         onQueryChange = viewModel::onQueryChange,
-        onSongClick = onSongClick,
+        onSongClick = { song ->
+            viewModel.onSongTapped(song)
+            onSongClick(song)
+        },
         onViewAlbum = onViewAlbum,
         modifier = Modifier.safeDrawingPadding()
     )
@@ -57,10 +63,11 @@ fun SongsScreen(
 private fun SongListContent(
     query: String,
     songs: LazyPagingItems<Song>,
+    recentlyPlayed: List<Song>,
     onQueryChange: (String) -> Unit,
     onSongClick: (Song) -> Unit,
     onViewAlbum: (Song) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
         Text(
@@ -99,6 +106,12 @@ private fun SongListContent(
 
         Box(modifier = Modifier.weight(1f)) {
             when {
+                query.isBlank() && recentlyPlayed.isNotEmpty() ->
+                    RecentlyPlayedSection(
+                        songs = recentlyPlayed,
+                        onSongClick = onSongClick,
+                        onViewAlbum = onViewAlbum,
+                    )
                 query.isBlank() -> EmptyPrompt("Search for songs")
                 songs.loadState.refresh is LoadState.Loading -> CenteredProgress()
                 songs.loadState.refresh is LoadState.Error -> {
@@ -142,6 +155,33 @@ private fun SongsList(
                 ) {
                     Text("Retry — ${e.localizedMessage}")
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RecentlyPlayedSection(
+    songs: List<Song>,
+    onSongClick: (Song) -> Unit,
+    onViewAlbum: (Song) -> Unit,
+) {
+    Column {
+        Text(
+            text = "Recently played",
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+        )
+        HorizontalDivider()
+        LazyColumn(contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp)) {
+            items(count = songs.size, key = { songs[it].trackId }) { index ->
+                val song = songs[index]
+                SongRow(
+                    song = song,
+                    onClick = { onSongClick(song) },
+                    onViewAlbum = { onViewAlbum(song) },
+                )
             }
         }
     }

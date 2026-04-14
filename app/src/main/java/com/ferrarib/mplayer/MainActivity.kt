@@ -9,12 +9,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.ui.Modifier
+import androidx.media3.exoplayer.ExoPlayer
 import com.ferrarib.mplayer.core.navigation.AppNavHost
 import com.ferrarib.mplayer.ui.theme.MPlayerTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject lateinit var exoPlayer: ExoPlayer
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,5 +32,10 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isFinishing) exoPlayer.release()
     }
 }

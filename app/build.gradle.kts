@@ -66,6 +66,8 @@ dependencies {
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
     implementation(libs.coil.compose)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.common)
 
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.moshi)

@@ -1,5 +1,7 @@
 package com.ferrarib.mplayer.core.di
 
+import com.ferrarib.mplayer.data.repository.RecentlyPlayedRepository
+import com.ferrarib.mplayer.data.repository.RecentlyPlayedRepositoryImpl
 import com.ferrarib.mplayer.data.repository.SongRepository
 import com.ferrarib.mplayer.data.repository.SongRepositoryImpl
 import dagger.Binds
@@ -15,4 +17,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindSongRepository(impl: SongRepositoryImpl): SongRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindRecentlyPlayedRepository(impl: RecentlyPlayedRepositoryImpl): RecentlyPlayedRepository
 }
