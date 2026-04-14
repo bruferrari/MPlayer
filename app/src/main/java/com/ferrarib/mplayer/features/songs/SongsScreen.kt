@@ -48,7 +48,8 @@ fun SongsScreen(
         songs = songs,
         onQueryChange = viewModel::onQueryChange,
         onSongClick = onSongClick,
-        onViewAlbum = onViewAlbum
+        onViewAlbum = onViewAlbum,
+        modifier = Modifier.safeDrawingPadding()
     )
 }
 
@@ -61,7 +62,7 @@ private fun SongListContent(
     onViewAlbum: (Song) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier.fillMaxSize().safeDrawingPadding()) {
+    Column(modifier = modifier.fillMaxSize()) {
         Text(
             text = "Songs",
             style = MaterialTheme.typography.headlineLarge,
