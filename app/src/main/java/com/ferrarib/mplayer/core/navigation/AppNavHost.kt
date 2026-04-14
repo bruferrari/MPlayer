@@ -3,9 +3,12 @@ package com.ferrarib.mplayer.core.navigation
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.ferrarib.mplayer.features.songs.SongsScreen
 import com.ferrarib.mplayer.features.splash.SplashScreen
 
 @Composable
@@ -25,13 +28,28 @@ fun AppNavHost(windowSizeClass: WindowSizeClass) {
             )
         }
         composable(AppDestinations.SONGS) {
-            // Placeholder until Phase 2.
-            Text(text = "Songs screen — Phase 2")
+            SongsScreen(
+                windowSizeClass = windowSizeClass,
+                onSongClick = { song ->
+                    navController.navigate(AppDestinations.player(song.trackId))
+                },
+                onViewAlbum = { song ->
+                    navController.navigate(AppDestinations.album(song.collectionId))
+                }
+            )
         }
-        composable(AppDestinations.PLAYER_ROUTE) {
+        composable(
+            route = AppDestinations.PLAYER_ROUTE,
+            arguments = listOf(navArgument(AppDestinations.ARG_TRACK_ID) { type = NavType.LongType })
+        ) {
+            // Placeholder — Phase 3
             Text(text = "Player — Phase 3")
         }
-        composable(AppDestinations.ALBUM_ROUTE) {
+        composable(
+            route = AppDestinations.ALBUM_ROUTE,
+            arguments = listOf(navArgument(AppDestinations.ARG_COLLECTION_ID) { type = NavType.LongType })
+        ) {
+            // Placeholder — Phase 4
             Text(text = "Album — Phase 4")
         }
     }

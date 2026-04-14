@@ -63,6 +63,10 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
 
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.paging.compose)
+    implementation(libs.coil.compose)
+
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.moshi)
     implementation(libs.okhttp.logging.interceptor)
@@ -73,6 +77,7 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
     testImplementation(libs.okhttp.mockwebserver)
+    testImplementation(libs.androidx.paging.testing)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
