@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -19,7 +18,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -35,6 +33,7 @@ import com.ferrarib.mplayer.domain.model.Song
 import com.ferrarib.mplayer.features.songs.components.SongRow
 
 @Composable
+@Suppress("UNUSED_PARAMETER")
 fun SongsScreen(
     windowSizeClass: WindowSizeClass,
     onSongClick: (Song) -> Unit,
@@ -44,25 +43,13 @@ fun SongsScreen(
     val query by viewModel.query.collectAsStateWithLifecycle()
     val songs = viewModel.pagingData.collectAsLazyPagingItems()
 
-    if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded) {
-        // Two-pane: songs list fills this composable;
-        // detail pane is managed by the parent NavHost scaffold.
-        SongListContent(
-            query = query,
-            songs = songs,
-            onQueryChange = viewModel::onQueryChange,
-            onSongClick = onSongClick,
-            onViewAlbum = onViewAlbum
-        )
-    } else {
-        SongListContent(
-            query = query,
-            songs = songs,
-            onQueryChange = viewModel::onQueryChange,
-            onSongClick = onSongClick,
-            onViewAlbum = onViewAlbum
-        )
-    }
+    SongListContent(
+        query = query,
+        songs = songs,
+        onQueryChange = viewModel::onQueryChange,
+        onSongClick = onSongClick,
+        onViewAlbum = onViewAlbum
+    )
 }
 
 @Composable
@@ -75,21 +62,38 @@ private fun SongListContent(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxSize().safeDrawingPadding()) {
+        Text(
+            text = "Songs",
+            style = MaterialTheme.typography.headlineLarge,
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 12.dp)
+        )
+
         OutlinedTextField(
             value = query,
             onValueChange = onQueryChange,
-            placeholder = { Text("Search your library") },
+            placeholder = {
+                Text(
+                    text = "Search your library",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
             leadingIcon = {
-                Icon(Icons.Rounded.Search, contentDescription = null)
+                Icon(
+                    imageVector = Icons.Rounded.Search,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             },
             singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                 focusedBorderColor = MaterialTheme.colorScheme.primary
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
         )
 
         Box(modifier = Modifier.weight(1f)) {
@@ -114,17 +118,13 @@ private fun SongsList(
     onSongClick: (Song) -> Unit,
     onViewAlbum: (Song) -> Unit
 ) {
-    LazyColumn(contentPadding = PaddingValues(bottom = 16.dp)) {
+    LazyColumn(contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp)) {
         items(count = songs.itemCount, key = songs.itemKey { it.trackId }) { index ->
             val song = songs[index] ?: return@items
             SongRow(
                 song = song,
                 onClick = { onSongClick(song) },
                 onViewAlbum = { onViewAlbum(song) }
-            )
-            HorizontalDivider(
-                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                modifier = Modifier.padding(start = 76.dp)
             )
         }
         if (songs.loadState.append is LoadState.Loading) {
