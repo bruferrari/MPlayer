@@ -17,12 +17,12 @@ fun ArtworkHero(
     modifier: Modifier = Modifier,
 ) {
     AsyncImage(
-        model = artworkUrl,
-        contentDescription = contentDescription,
-        contentScale = ContentScale.Crop,
         modifier = modifier
             .fillMaxWidth()
             .aspectRatio(1f)
             .clip(RoundedCornerShape(16.dp)),
+        model = artworkUrl,
+        contentDescription = contentDescription,
+        contentScale = ContentScale.Crop
     )
 }

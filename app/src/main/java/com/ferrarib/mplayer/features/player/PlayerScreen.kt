@@ -10,9 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -24,9 +25,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ferrarib.mplayer.R
+import com.ferrarib.mplayer.domain.model.Song
 import com.ferrarib.mplayer.features.player.components.ArtworkHero
 import com.ferrarib.mplayer.features.player.components.PlaybackControls
 import com.ferrarib.mplayer.features.player.components.RecentlyPlayedList
@@ -38,7 +42,9 @@ fun PlayerScreen(
     viewModel: PlayerViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val isExpanded = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded
+    val widthClass = windowSizeClass.widthSizeClass
+    val isExpanded = widthClass == WindowWidthSizeClass.Expanded
+    val isPhone = widthClass == WindowWidthSizeClass.Compact
 
     Box(
         modifier = Modifier
@@ -57,6 +63,7 @@ fun PlayerScreen(
         } else {
             CompactLayout(
                 uiState = uiState,
+                isPhone = isPhone,
                 onBack = onBack,
                 onPlayPause = viewModel::onPlayPauseClick,
                 onPrev = viewModel::onPrevClick,
@@ -73,7 +80,7 @@ private fun ExpandedLayout(
     onPlayPause: () -> Unit,
     onPrev: () -> Unit,
     onNext: () -> Unit,
-    onRowClick: (com.ferrarib.mplayer.domain.model.Song) -> Unit,
+    onRowClick: (Song) -> Unit,
 ) {
     Row(modifier = Modifier.fillMaxSize()) {
         // Left pane — artwork + metadata + controls
@@ -81,21 +88,28 @@ private fun ExpandedLayout(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight()
-                .padding(horizontal = 32.dp, vertical = 16.dp),
+                .padding(horizontal = 24.dp, vertical = 16.dp),
         ) {
-            TopBar(title = "Now playing", onBack = onBack)
-            Spacer(modifier = Modifier.height(24.dp))
-            ArtworkHero(
-                artworkUrl = uiState.currentSong?.artworkUrl ?: "",
-                contentDescription = uiState.currentSong?.trackName,
-                modifier = Modifier.fillMaxWidth(0.85f).align(Alignment.CenterHorizontally),
-            )
-            Spacer(modifier = Modifier.height(24.dp))
+            TopBar(onBack = onBack)
+            Spacer(modifier = Modifier.height(16.dp))
+            Box(
+                modifier = Modifier.weight(1f).fillMaxWidth(),
+                contentAlignment = Alignment.Center,
+            ) {
+                ArtworkHero(
+                    artworkUrl = uiState.currentSong?.artworkUrl ?: "",
+                    contentDescription = uiState.currentSong?.trackName,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 200.dp),
+                )
+            }
+            Spacer(modifier = Modifier.height(20.dp))
             SongMetadata(
                 trackName = uiState.currentSong?.trackName ?: "",
                 artistName = uiState.currentSong?.artistName ?: "",
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             PlaybackControls(
                 state = uiState.playback,
                 onPlayPause = onPlayPause,
@@ -104,30 +118,40 @@ private fun ExpandedLayout(
             )
         }
 
-        // Divider
-        Spacer(
+        // Right pane — recently played list with header icon
+        Column(
             modifier = Modifier
-                .width(1.dp)
+                .weight(0.55f)
                 .fillMaxHeight()
-                .padding(vertical = 32.dp)
-        )
-
-        // Right pane — recently played list
-        RecentlyPlayedList(
-            songs = uiState.recentlyPlayed,
-            currentTrackId = uiState.playback.currentTrackId,
-            onSongClick = onRowClick,
-            modifier = Modifier
-                .weight(0.6f)
-                .fillMaxHeight()
-                .padding(top = 72.dp), // align with list content below top bar
-        )
+                .padding(top = 16.dp, end = 8.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 8.dp, bottom = 8.dp),
+                contentAlignment = Alignment.TopEnd,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_songs_list),
+                    contentDescription = "Queue",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp),
+                )
+            }
+            RecentlyPlayedList(
+                songs = uiState.recentlyPlayed,
+                currentTrackId = uiState.playback.currentTrackId,
+                onSongClick = onRowClick,
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
     }
 }
 
 @Composable
 private fun CompactLayout(
     uiState: PlayerUiState,
+    isPhone: Boolean,
     onBack: () -> Unit,
     onPlayPause: () -> Unit,
     onPrev: () -> Unit,
@@ -138,18 +162,33 @@ private fun CompactLayout(
             .fillMaxSize()
             .padding(horizontal = 24.dp, vertical = 16.dp),
     ) {
-        TopBar(title = "Now playing", onBack = onBack)
-        Spacer(modifier = Modifier.height(32.dp))
-        ArtworkHero(
-            artworkUrl = uiState.currentSong?.artworkUrl ?: "",
-            contentDescription = uiState.currentSong?.trackName,
-        )
-        Spacer(modifier = Modifier.height(32.dp))
+        TopBar(onBack = onBack)
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Box(
+            modifier = if (isPhone) {
+                Modifier.weight(1f).fillMaxWidth()
+            } else {
+                Modifier.weight(1f).padding(horizontal = 100.dp).fillMaxWidth()
+            },
+            contentAlignment = Alignment.Center,
+        ) {
+            ArtworkHero(
+                artworkUrl = uiState.currentSong?.artworkUrl ?: "",
+                contentDescription = uiState.currentSong?.trackName,
+            )
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
         SongMetadata(
             trackName = uiState.currentSong?.trackName ?: "",
             artistName = uiState.currentSong?.artistName ?: "",
         )
-        Spacer(modifier = Modifier.height(32.dp))
+
+        Spacer(modifier = Modifier.height(20.dp))
+
         PlaybackControls(
             state = uiState.playback,
             onPlayPause = onPlayPause,
@@ -160,8 +199,11 @@ private fun CompactLayout(
 }
 
 @Composable
-private fun TopBar(title: String, onBack: () -> Unit) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+private fun TopBar(onBack: () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         IconButton(onClick = onBack) {
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
@@ -170,11 +212,20 @@ private fun TopBar(title: String, onBack: () -> Unit) {
             )
         }
         Text(
-            text = title,
+            text = "Now playing",
             style = MaterialTheme.typography.titleMedium,
             color = Color.White,
-            modifier = Modifier.padding(start = 8.dp),
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 4.dp),
         )
+        IconButton(onClick = {}) {
+            Icon(
+                imageVector = Icons.Rounded.MoreVert,
+                contentDescription = "More options",
+                tint = Color.White,
+            )
+        }
     }
 }
 
@@ -182,7 +233,7 @@ private fun TopBar(title: String, onBack: () -> Unit) {
 private fun SongMetadata(trackName: String, artistName: String) {
     Text(
         text = trackName,
-        style = MaterialTheme.typography.headlineMedium,
+        style = MaterialTheme.typography.headlineLarge,
         color = Color.White,
     )
     Spacer(modifier = Modifier.height(4.dp))

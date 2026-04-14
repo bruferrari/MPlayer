@@ -12,11 +12,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Equalizer
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import com.ferrarib.mplayer.R
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -25,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -96,9 +95,9 @@ private fun RecentlyPlayedRow(
         }
         if (isCurrent) {
             Icon(
-                imageVector = Icons.Rounded.Equalizer,
+                painter = painterResource(R.drawable.ic_waves),
                 contentDescription = "Now playing",
-                tint = MaterialTheme.colorScheme.primary,
+                tint = Color.White,
                 modifier = Modifier
                     .padding(start = 8.dp)
                     .size(20.dp),
