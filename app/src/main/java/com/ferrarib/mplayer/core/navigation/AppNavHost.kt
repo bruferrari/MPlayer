@@ -1,6 +1,5 @@
 package com.ferrarib.mplayer.core.navigation
 
-import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
@@ -8,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.ferrarib.mplayer.features.album.AlbumScreen
 import com.ferrarib.mplayer.features.player.PlayerScreen
 import com.ferrarib.mplayer.features.songs.SongsScreen
 import com.ferrarib.mplayer.features.splash.SplashScreen
@@ -46,14 +46,20 @@ fun AppNavHost(windowSizeClass: WindowSizeClass) {
             PlayerScreen(
                 windowSizeClass = windowSizeClass,
                 onBack = { navController.popBackStack() },
+                onViewAlbum = { collectionId ->
+                    navController.navigate(AppDestinations.album(collectionId))
+                },
             )
         }
         composable(
             route = AppDestinations.ALBUM_ROUTE,
             arguments = listOf(navArgument(AppDestinations.ARG_COLLECTION_ID) { type = NavType.LongType })
-        ) {
-            // Placeholder — Phase 4
-            Text(text = "Album — Phase 4")
+        ) { backStackEntry ->
+            val collectionId = backStackEntry.arguments?.getLong(AppDestinations.ARG_COLLECTION_ID) ?: 0L
+            AlbumScreen(
+                collectionId = collectionId,
+                onBack = { navController.popBackStack() },
+            )
         }
     }
 }

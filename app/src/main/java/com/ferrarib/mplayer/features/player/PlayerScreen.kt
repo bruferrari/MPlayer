@@ -14,10 +14,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
@@ -39,12 +44,14 @@ import com.ferrarib.mplayer.features.player.components.RecentlyPlayedList
 fun PlayerScreen(
     windowSizeClass: WindowSizeClass,
     onBack: () -> Unit,
+    onViewAlbum: (collectionId: Long) -> Unit,
     viewModel: PlayerViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val widthClass = windowSizeClass.widthSizeClass
     val isExpanded = widthClass == WindowWidthSizeClass.Expanded
     val isPhone = widthClass == WindowWidthSizeClass.Compact
+    val collectionId = uiState.currentSong?.collectionId ?: 0L
 
     Box(
         modifier = Modifier
@@ -55,6 +62,7 @@ fun PlayerScreen(
             ExpandedLayout(
                 uiState = uiState,
                 onBack = onBack,
+                onViewAlbum = { onViewAlbum(collectionId) },
                 onPlayPause = viewModel::onPlayPauseClick,
                 onPrev = viewModel::onPrevClick,
                 onNext = viewModel::onNextClick,
@@ -65,6 +73,7 @@ fun PlayerScreen(
                 uiState = uiState,
                 isPhone = isPhone,
                 onBack = onBack,
+                onViewAlbum = { onViewAlbum(collectionId) },
                 onPlayPause = viewModel::onPlayPauseClick,
                 onPrev = viewModel::onPrevClick,
                 onNext = viewModel::onNextClick,
@@ -77,6 +86,7 @@ fun PlayerScreen(
 private fun ExpandedLayout(
     uiState: PlayerUiState,
     onBack: () -> Unit,
+    onViewAlbum: () -> Unit,
     onPlayPause: () -> Unit,
     onPrev: () -> Unit,
     onNext: () -> Unit,
@@ -90,7 +100,7 @@ private fun ExpandedLayout(
                 .fillMaxHeight()
                 .padding(horizontal = 24.dp, vertical = 16.dp),
         ) {
-            TopBar(onBack = onBack)
+            TopBar(onBack = onBack, onViewAlbum = onViewAlbum)
             Spacer(modifier = Modifier.height(16.dp))
             Box(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
@@ -153,6 +163,7 @@ private fun CompactLayout(
     uiState: PlayerUiState,
     isPhone: Boolean,
     onBack: () -> Unit,
+    onViewAlbum: () -> Unit,
     onPlayPause: () -> Unit,
     onPrev: () -> Unit,
     onNext: () -> Unit,
@@ -162,7 +173,7 @@ private fun CompactLayout(
             .fillMaxSize()
             .padding(horizontal = 24.dp, vertical = 16.dp),
     ) {
-        TopBar(onBack = onBack)
+        TopBar(onBack = onBack, onViewAlbum = onViewAlbum)
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -199,7 +210,8 @@ private fun CompactLayout(
 }
 
 @Composable
-private fun TopBar(onBack: () -> Unit) {
+private fun TopBar(onBack: () -> Unit, onViewAlbum: () -> Unit) {
+    var menuExpanded by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -219,12 +231,26 @@ private fun TopBar(onBack: () -> Unit) {
                 .weight(1f)
                 .padding(start = 4.dp),
         )
-        IconButton(onClick = {}) {
-            Icon(
-                imageVector = Icons.Rounded.MoreVert,
-                contentDescription = "More options",
-                tint = Color.White,
-            )
+        Box {
+            IconButton(onClick = { menuExpanded = true }) {
+                Icon(
+                    imageVector = Icons.Rounded.MoreVert,
+                    contentDescription = "More options",
+                    tint = Color.White,
+                )
+            }
+            DropdownMenu(
+                expanded = menuExpanded,
+                onDismissRequest = { menuExpanded = false },
+            ) {
+                DropdownMenuItem(
+                    text = { Text("View album") },
+                    onClick = {
+                        menuExpanded = false
+                        onViewAlbum()
+                    }
+                )
+            }
         }
     }
 }
