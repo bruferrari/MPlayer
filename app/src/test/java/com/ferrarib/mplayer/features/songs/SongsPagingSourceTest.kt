@@ -26,6 +26,8 @@ class SongsPagingSourceTest {
                 .map { songDto(it.toLong()) }
             return SearchResponseDto(resultCount = totalItems, results = slice)
         }
+        override suspend fun lookup(id: Long, entity: String) =
+            throw UnsupportedOperationException("not used in this test")
     }
 
     @Test
