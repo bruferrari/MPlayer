@@ -4,6 +4,9 @@ import app.cash.turbine.test
 import com.ferrarib.mplayer.data.cache.RecentlyPlayedDataSource
 import com.ferrarib.mplayer.data.cache.RecentlyPlayedFile
 import com.ferrarib.mplayer.domain.model.Song
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -28,7 +31,10 @@ class RecentlyPlayedRepositoryImplTest {
         val file = File(tempFolder.root, "recently_played.json")
         val dataSource = RecentlyPlayedDataSource(file, Json)
         if (initial.isNotEmpty()) dataSource.write(initial)
-        return RecentlyPlayedRepositoryImpl(dataSource)
+        return RecentlyPlayedRepositoryImpl(
+            dataSource = dataSource,
+            scope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
+        )
     }
 
     @Test

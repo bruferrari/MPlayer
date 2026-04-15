@@ -1,10 +1,9 @@
 package com.ferrarib.mplayer.data.repository
 
+import com.ferrarib.mplayer.core.di.ApplicationScope
 import com.ferrarib.mplayer.data.cache.RecentlyPlayedDataSource
 import com.ferrarib.mplayer.domain.model.Song
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -15,9 +14,9 @@ import javax.inject.Singleton
 @Singleton
 class RecentlyPlayedRepositoryImpl @Inject constructor(
     private val dataSource: RecentlyPlayedDataSource,
+    @ApplicationScope private val scope: CoroutineScope,
 ) : RecentlyPlayedRepository {
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val state = MutableStateFlow<List<Song>?>(null)
 
     init {
