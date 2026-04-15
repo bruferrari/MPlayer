@@ -86,6 +86,11 @@ class PlaybackController @Inject constructor(
         _state.update { it.copy(positionMs = player.currentPosition.coerceAtLeast(0L)) }
     }
 
+    fun seekTo(positionMs: Long) {
+        player.seekTo(positionMs)
+        _state.update { it.copy(positionMs = positionMs) }
+    }
+
     fun toggleRepeat() {
         _state.update { it.copy(isRepeatOne = !it.isRepeatOne) }
     }

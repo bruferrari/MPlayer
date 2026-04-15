@@ -78,4 +78,9 @@ class PlayerViewModel @Inject constructor(
     fun onNextClick() = playback.next()
 
     fun onRepeatClick() = playback.toggleRepeat()
+
+    fun onSeek(fraction: Float) {
+        val positionMs = (fraction * playback.state.value.durationMs).toLong()
+        playback.seekTo(positionMs)
+    }
 }
