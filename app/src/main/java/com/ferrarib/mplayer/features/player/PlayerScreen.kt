@@ -59,6 +59,7 @@ fun PlayerScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color.Black)
             .safeDrawingPadding()
     ) {
         if (isExpanded) {

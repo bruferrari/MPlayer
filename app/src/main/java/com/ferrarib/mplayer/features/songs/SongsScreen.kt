@@ -1,5 +1,6 @@
 package com.ferrarib.mplayer.features.songs
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,10 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -22,6 +23,7 @@ import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -45,18 +47,24 @@ fun SongsScreen(
     val songs = viewModel.pagingData.collectAsLazyPagingItems()
     val recentlyPlayed by viewModel.recentlyPlayed.collectAsStateWithLifecycle()
 
-    SongListContent(
-        query = query,
-        songs = songs,
-        recentlyPlayed = recentlyPlayed,
-        onQueryChange = viewModel::onQueryChange,
-        onSongClick = { song ->
-            viewModel.onSongTapped(song)
-            onSongClick(song)
-        },
-        onViewAlbum = onViewAlbum,
-        modifier = Modifier.safeDrawingPadding()
-    )
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+            .safeDrawingPadding()
+    ) {
+        SongListContent(
+            query = query,
+            songs = songs,
+            recentlyPlayed = recentlyPlayed,
+            onQueryChange = viewModel::onQueryChange,
+            onSongClick = { song ->
+                viewModel.onSongTapped(song)
+                onSongClick(song)
+            },
+            onViewAlbum = onViewAlbum,
+        )
+    }
 }
 
 @Composable
@@ -67,9 +75,8 @@ private fun SongListContent(
     onQueryChange: (String) -> Unit,
     onSongClick: (Song) -> Unit,
     onViewAlbum: (Song) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize()) {
         Text(
             text = "Songs",
             style = MaterialTheme.typography.headlineLarge,
@@ -93,6 +100,7 @@ private fun SongListContent(
                 )
             },
             singleLine = true,
+            shape = RoundedCornerShape(16.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                 focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -173,7 +181,7 @@ private fun RecentlyPlayedSection(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
         )
-        HorizontalDivider()
+
         LazyColumn(contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp)) {
             items(count = songs.size, key = { songs[it].trackId }) { index ->
                 val song = songs[index]

@@ -122,8 +122,14 @@ fun PlaybackControls(
                 .fillMaxWidth()
                 .padding(top = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            IconButton(onClick = onPlayPause, modifier = Modifier.size(48.dp)) {
+            IconButton(
+                onClick = onPlayPause,
+                modifier = Modifier
+                    .size(64.dp)
+                    .background(Color(0xFF3A3A3A), CircleShape),
+            ) {
                 Icon(
                     painter = painterResource(if (state.isPlaying) R.drawable.ic_pause else R.drawable.ic_play),
                     contentDescription = if (state.isPlaying) "Pause" else "Play",

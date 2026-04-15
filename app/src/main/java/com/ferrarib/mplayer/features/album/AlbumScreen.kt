@@ -1,5 +1,6 @@
 package com.ferrarib.mplayer.features.album
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -54,6 +54,7 @@ fun AlbumScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color.Black)
             .safeDrawingPadding()
     ) {
         when (val state = uiState) {
@@ -82,70 +83,73 @@ private fun AlbumContent(
     onSongClick: (Song) -> Unit,
 ) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        // Top bar
-        item {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 16.dp)
-            ) {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White,
-                    )
-                }
-                Text(
-                    text = "Album",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.White,
-                )
-            }
-        }
-
-        // Album header
-        item {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 24.dp)
-            ) {
-                AsyncImage(
-                    model = album.artworkUrl,
-                    contentDescription = album.name,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(110.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    Text(
-                        text = album.name,
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = Color.White,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = album.artist,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = Color(0xFF737373),
-                    )
-                }
-            }
-            HorizontalDivider()
-        }
-
-        // Track list
+        item { TopBar(onBack = onBack) }
+        item { AlbumHeader(album = album) }
         items(album.tracks) { song ->
             TrackRow(
                 song = song,
                 onClick = { onSongClick(song) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun TopBar(onBack: () -> Unit) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(end = 16.dp)
+    ) {
+        IconButton(onClick = onBack) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                contentDescription = "Back",
+                tint = Color.White,
+            )
+        }
+
+        Text(
+            text = "Album",
+            style = MaterialTheme.typography.titleMedium,
+            color = Color.White,
+        )
+    }
+}
+
+@Composable
+private fun AlbumHeader(album: Album) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 48.dp, bottom = 48.dp)
+    ) {
+        AsyncImage(
+            model = album.artworkUrl,
+            contentDescription = album.name,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(110.dp)
+                .clip(RoundedCornerShape(16.dp))
+        )
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Column(verticalArrangement = Arrangement.Center) {
+            Text(
+                text = album.name,
+                style = MaterialTheme.typography.headlineLarge,
+                color = Color.White,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = album.artist,
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color(0xFF737373),
             )
         }
     }
