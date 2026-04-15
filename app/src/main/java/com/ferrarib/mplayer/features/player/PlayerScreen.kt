@@ -1,6 +1,9 @@
 package com.ferrarib.mplayer.features.player
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -99,7 +102,6 @@ private fun ExpandedLayout(
     onRowClick: (Song) -> Unit,
 ) {
     Row(modifier = Modifier.fillMaxSize()) {
-        // Left pane — artwork + metadata + controls
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -107,7 +109,9 @@ private fun ExpandedLayout(
                 .padding(horizontal = 24.dp, vertical = 16.dp),
         ) {
             TopBar(onBack = onBack, onViewAlbum = onViewAlbum)
+
             Spacer(modifier = Modifier.height(16.dp))
+
             Box(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
                 contentAlignment = Alignment.Center,
@@ -115,17 +119,18 @@ private fun ExpandedLayout(
                 ArtworkHero(
                     artworkUrl = uiState.currentSong?.artworkUrl ?: "",
                     contentDescription = uiState.currentSong?.trackName,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 200.dp),
+                    modifier = Modifier.fillMaxWidth(0.4f),
                 )
             }
             Spacer(modifier = Modifier.height(20.dp))
+
             SongMetadata(
                 trackName = uiState.currentSong?.trackName ?: "",
                 artistName = uiState.currentSong?.artistName ?: "",
             )
+
             Spacer(modifier = Modifier.height(16.dp))
+
             PlaybackControls(
                 state = uiState.playback,
                 onPlayPause = onPlayPause,
@@ -136,33 +141,47 @@ private fun ExpandedLayout(
             )
         }
 
-        // Right pane — recently played list with header icon
-        Column(
+        RightPane(
+            modifier = Modifier.weight(0.30f),
+            uiState = uiState,
+            onRowClick = onRowClick,
+        )
+    }
+}
+
+@Composable
+private fun RightPane(
+    modifier: Modifier = Modifier,
+    uiState: PlayerUiState,
+    onRowClick: (Song) -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxHeight()
+            .padding(top = 16.dp, end = 20.dp)
+            .background(Color(0x26FFFFFF), RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(20.dp)),
+    ) {
+        Box(
             modifier = Modifier
-                .weight(0.55f)
-                .fillMaxHeight()
-                .padding(top = 16.dp, end = 8.dp),
+                .fillMaxWidth()
+                .padding(start = 16.dp, top = 16.dp, bottom = 20.dp),
+            contentAlignment = Alignment.TopStart,
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 8.dp, bottom = 8.dp),
-                contentAlignment = Alignment.TopEnd,
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_songs_list),
-                    contentDescription = "Queue",
-                    tint = Color.White,
-                    modifier = Modifier.size(24.dp),
-                )
-            }
-            RecentlyPlayedList(
-                songs = uiState.queue,
-                currentTrackId = uiState.playback.currentTrackId,
-                onSongClick = onRowClick,
-                modifier = Modifier.fillMaxSize(),
+            Icon(
+                painter = painterResource(R.drawable.ic_songs_list),
+                contentDescription = "Queue",
+                tint = Color.White,
+                modifier = Modifier.size(24.dp),
             )
         }
+
+        RecentlyPlayedList(
+            songs = uiState.queue,
+            currentTrackId = uiState.playback.currentTrackId,
+            onSongClick = onRowClick,
+            modifier = Modifier.fillMaxSize(),
+        )
     }
 }
 

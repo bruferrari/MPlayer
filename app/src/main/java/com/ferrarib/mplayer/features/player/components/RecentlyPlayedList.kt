@@ -49,6 +49,7 @@ fun RecentlyPlayedList(
     LazyColumn(state = listState, modifier = modifier) {
         items(songs, key = { it.trackId }) { song ->
             val isCurrent = song.trackId == currentTrackId
+
             RecentlyPlayedRow(
                 song = song,
                 isCurrent = isCurrent,
@@ -79,7 +80,9 @@ private fun RecentlyPlayedRow(
                 .size(48.dp)
                 .clip(RoundedCornerShape(8.dp)),
         )
+
         Spacer(modifier = Modifier.width(12.dp))
+
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = song.trackName,
@@ -88,6 +91,7 @@ private fun RecentlyPlayedRow(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+
             Text(
                 text = song.artistName,
                 fontSize = 12.sp,
@@ -96,6 +100,7 @@ private fun RecentlyPlayedRow(
                 overflow = TextOverflow.Ellipsis,
             )
         }
+
         if (isCurrent) {
             Icon(
                 painter = painterResource(R.drawable.ic_waves),
@@ -103,7 +108,7 @@ private fun RecentlyPlayedRow(
                 tint = Color.White,
                 modifier = Modifier
                     .padding(start = 8.dp)
-                    .size(20.dp),
+                    .size(36.dp),
             )
         }
     }
