@@ -5,8 +5,9 @@ import androidx.paging.PagingSource
 import androidx.paging.testing.TestPager
 import com.ferrarib.mplayer.core.network.ItunesApi
 import com.ferrarib.mplayer.features.songs.SongsPagingSource
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -15,7 +16,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 
 class SongRepositoryImplTest {
 
@@ -25,11 +25,11 @@ class SongRepositoryImplTest {
     @Before
     fun setUp() {
         server.start()
-        val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+        val json = Json { ignoreUnknownKeys = true }
         api = Retrofit.Builder()
             .baseUrl(server.url("/"))
             .client(OkHttpClient())
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
             .create(ItunesApi::class.java)
     }

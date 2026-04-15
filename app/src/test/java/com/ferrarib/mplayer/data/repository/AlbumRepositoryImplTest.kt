@@ -1,9 +1,10 @@
 package com.ferrarib.mplayer.data.repository
 
 import com.ferrarib.mplayer.core.network.ItunesApi
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -13,7 +14,6 @@ import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 
 class AlbumRepositoryImplTest {
 
@@ -23,11 +23,11 @@ class AlbumRepositoryImplTest {
     @Before
     fun setUp() {
         server.start()
-        val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+        val json = Json { ignoreUnknownKeys = true }
         val api = Retrofit.Builder()
             .baseUrl(server.url("/"))
             .client(OkHttpClient())
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
             .create(ItunesApi::class.java)
         repo = AlbumRepositoryImpl(api)

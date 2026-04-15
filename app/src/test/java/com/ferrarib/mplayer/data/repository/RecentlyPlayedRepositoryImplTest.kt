@@ -4,8 +4,7 @@ import app.cash.turbine.test
 import com.ferrarib.mplayer.data.cache.RecentlyPlayedDataSource
 import com.ferrarib.mplayer.data.cache.RecentlyPlayedFile
 import com.ferrarib.mplayer.domain.model.Song
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import kotlinx.serialization.json.Json
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -26,9 +25,8 @@ class RecentlyPlayedRepositoryImplTest {
     )
 
     private fun repo(initial: List<Song> = emptyList()): RecentlyPlayedRepositoryImpl {
-        val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
         val file = File(tempFolder.root, "recently_played.json")
-        val dataSource = RecentlyPlayedDataSource(file, moshi)
+        val dataSource = RecentlyPlayedDataSource(file, Json)
         if (initial.isNotEmpty()) dataSource.write(initial)
         return RecentlyPlayedRepositoryImpl(dataSource)
     }

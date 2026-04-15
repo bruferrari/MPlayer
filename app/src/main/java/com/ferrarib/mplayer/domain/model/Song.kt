@@ -1,5 +1,8 @@
 package com.ferrarib.mplayer.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Song(
     val trackId: Long,
     val trackName: String,

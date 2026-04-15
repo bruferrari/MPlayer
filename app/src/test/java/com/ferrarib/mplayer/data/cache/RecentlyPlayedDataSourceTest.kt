@@ -1,8 +1,7 @@
 package com.ferrarib.mplayer.data.cache
 
 import com.ferrarib.mplayer.domain.model.Song
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -19,8 +18,7 @@ class RecentlyPlayedDataSourceTest {
 
     @Before
     fun setUp() {
-        val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-        dataSource = RecentlyPlayedDataSource(File(tempFolder.root, "recently_played.json"), moshi)
+        dataSource = RecentlyPlayedDataSource(File(tempFolder.root, "recently_played.json"), Json)
     }
 
     private fun song(id: Long) = Song(

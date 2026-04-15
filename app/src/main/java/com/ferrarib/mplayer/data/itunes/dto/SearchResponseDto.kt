@@ -1,10 +1,9 @@
 package com.ferrarib.mplayer.data.itunes.dto
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class SearchResponseDto(
-    @Json(name = "resultCount") val resultCount: Int,
-    @Json(name = "results") val results: List<SongDto>
+    val resultCount: Int,
+    val results: List<SongDto>,
 )

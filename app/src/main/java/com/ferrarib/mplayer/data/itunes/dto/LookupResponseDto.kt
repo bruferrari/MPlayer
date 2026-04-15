@@ -1,24 +1,23 @@
 package com.ferrarib.mplayer.data.itunes.dto
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class LookupResponseDto(
-    @Json(name = "resultCount") val resultCount: Int,
-    @Json(name = "results") val results: List<LookupItemDto>
+    val resultCount: Int,
+    val results: List<LookupItemDto>,
 )
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class LookupItemDto(
-    @Json(name = "wrapperType") val wrapperType: String?,
-    @Json(name = "collectionId") val collectionId: Long?,
-    @Json(name = "collectionName") val collectionName: String?,
-    @Json(name = "artistName") val artistName: String?,
-    @Json(name = "artworkUrl100") val artworkUrl100: String?,
-    @Json(name = "trackId") val trackId: Long?,
-    @Json(name = "trackName") val trackName: String?,
-    @Json(name = "trackNumber") val trackNumber: Int?,
-    @Json(name = "previewUrl") val previewUrl: String?,
-    @Json(name = "trackTimeMillis") val trackTimeMillis: Long?
+    val wrapperType: String? = null,
+    val collectionId: Long? = null,
+    val collectionName: String? = null,
+    val artistName: String? = null,
+    val artworkUrl100: String? = null,
+    val trackId: Long? = null,
+    val trackName: String? = null,
+    val trackNumber: Int? = null,
+    val previewUrl: String? = null,
+    val trackTimeMillis: Long? = null,
 )
