@@ -47,10 +47,32 @@ Key design decisions:
 ## Requirements
 
 - Android 10+ (minSdk 29)
+- Android Studio Meerkat or newer
 - No API key required (iTunes Search API is public)
 
-## Building
+## Running
+
+1. Clone the repository
+   ```bash
+   git clone https://github.com/ferrarib/MPlayer.git
+   cd MPlayer
+   ```
+
+2. Open the project in Android Studio
+
+3. Run on a device or emulator (API 29+)
+   ```bash
+   ./gradlew installDebug
+   ```
+
+   Or use the **Run** button in Android Studio.
+
+## Running Tests
 
 ```bash
-./gradlew assembleDebug
+# Unit tests
+./gradlew test
+
+# Instrumented tests
+./gradlew connectedAndroidTest
 ```
