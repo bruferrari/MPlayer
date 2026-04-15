@@ -25,7 +25,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.ferrarib.mplayer.R
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
@@ -78,7 +80,7 @@ private fun SongListContent(
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
-            text = "Songs",
+            text = stringResource(R.string.title_songs),
             style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 12.dp)
         )
@@ -88,7 +90,7 @@ private fun SongListContent(
             onValueChange = onQueryChange,
             placeholder = {
                 Text(
-                    text = "Search your library",
+                    text = stringResource(R.string.hint_search_library),
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
@@ -120,14 +122,14 @@ private fun SongListContent(
                         onSongClick = onSongClick,
                         onViewAlbum = onViewAlbum,
                     )
-                query.isBlank() -> EmptyPrompt("Search for songs")
+                query.isBlank() -> EmptyPrompt(stringResource(R.string.empty_search_for_songs))
                 songs.loadState.refresh is LoadState.Loading -> CenteredProgress()
                 songs.loadState.refresh is LoadState.Error -> {
                     val e = (songs.loadState.refresh as LoadState.Error).error
-                    ErrorPrompt(e.localizedMessage ?: "Something went wrong") { songs.retry() }
+                    ErrorPrompt(e.localizedMessage ?: "") { songs.retry() }
                 }
                 songs.itemCount == 0 && songs.loadState.refresh is LoadState.NotLoading ->
-                    EmptyPrompt("No results for \"$query\"")
+                    EmptyPrompt(stringResource(R.string.empty_no_results, query))
                 else -> SongsList(songs = songs, onSongClick = onSongClick, onViewAlbum = onViewAlbum)
             }
         }
@@ -161,7 +163,7 @@ private fun SongsList(
                         .fillMaxWidth()
                         .padding(8.dp)
                 ) {
-                    Text("Retry — ${e.localizedMessage}")
+                    Text(stringResource(R.string.error_retry_message, e.localizedMessage ?: ""))
                 }
             }
         }
@@ -176,7 +178,7 @@ private fun RecentlyPlayedSection(
 ) {
     Column {
         Text(
-            text = "Recently played",
+            text = stringResource(R.string.section_recently_played),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -211,7 +213,7 @@ private fun ErrorPrompt(message: String, onRetry: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(text = message, color = MaterialTheme.colorScheme.error)
-            TextButton(onClick = onRetry) { Text("Retry") }
+            TextButton(onClick = onRetry) { Text(stringResource(R.string.action_retry)) }
         }
     }
 }

@@ -28,6 +28,7 @@ import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.ferrarib.mplayer.R
 import com.ferrarib.mplayer.domain.model.Album
 import com.ferrarib.mplayer.domain.model.Song
 import com.ferrarib.mplayer.features.album.components.TrackRow
@@ -105,13 +107,13 @@ private fun TopBar(onBack: () -> Unit) {
         IconButton(onClick = onBack) {
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.cd_back),
                 tint = Color.White,
             )
         }
 
         Text(
-            text = "Album",
+            text = stringResource(R.string.title_album),
             style = MaterialTheme.typography.titleMedium,
             color = Color.White,
         )
@@ -165,14 +167,14 @@ private fun ErrorContent(
         IconButton(onClick = onBack) {
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.cd_back),
                 tint = Color.White,
             )
         }
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(text = message, color = MaterialTheme.colorScheme.error)
-                TextButton(onClick = onRetry) { Text("Retry") }
+                TextButton(onClick = onRetry) { Text(stringResource(R.string.action_retry)) }
             }
         }
     }

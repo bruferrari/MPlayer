@@ -1,3 +1,34 @@
 <resources>
     <string name="app_name">MPlayer</string>
+
+    <!-- Screen titles -->
+    <string name="title_songs">Songs</string>
+    <string name="title_album">Album</string>
+    <string name="title_now_playing">Now playing</string>
+
+    <!-- Actions -->
+    <string name="action_retry">Retry</string>
+    <string name="action_view_album">View album</string>
+
+    <!-- Search -->
+    <string name="hint_search_library">Search your library</string>
+    <string name="empty_search_for_songs">Search for songs</string>
+    <string name="empty_no_results">No results for &quot;%s&quot;</string>
+
+    <!-- Sections -->
+    <string name="section_recently_played">Recently played</string>
+
+    <!-- Error -->
+    <string name="error_retry_message">Retry — %s</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_back">Back</string>
+    <string name="cd_more_options">More options</string>
+    <string name="cd_queue">Queue</string>
+    <string name="cd_now_playing">Now playing</string>
+    <string name="cd_play">Play</string>
+    <string name="cd_pause">Pause</string>
+    <string name="cd_previous">Previous</string>
+    <string name="cd_next">Next</string>
+    <string name="cd_repeat">Repeat</string>
 </resources>

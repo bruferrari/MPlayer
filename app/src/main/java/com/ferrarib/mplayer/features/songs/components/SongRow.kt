@@ -28,10 +28,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.ferrarib.mplayer.R
 import com.ferrarib.mplayer.domain.model.Song
 
 @Composable
@@ -81,7 +83,7 @@ fun SongRow(
             IconButton(onClick = { menuExpanded = true }) {
                 Icon(
                     imageVector = Icons.Rounded.MoreVert,
-                    contentDescription = "More options",
+                    contentDescription = stringResource(R.string.cd_more_options),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -90,7 +92,7 @@ fun SongRow(
                 onDismissRequest = { menuExpanded = false }
             ) {
                 DropdownMenuItem(
-                    text = { Text("View album") },
+                    text = { Text(stringResource(R.string.action_view_album)) },
                     onClick = {
                         menuExpanded = false
                         onViewAlbum()

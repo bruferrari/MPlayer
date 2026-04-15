@@ -30,6 +30,7 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -132,7 +133,7 @@ fun PlaybackControls(
             ) {
                 Icon(
                     painter = painterResource(if (state.isPlaying) R.drawable.ic_pause else R.drawable.ic_play),
-                    contentDescription = if (state.isPlaying) "Pause" else "Play",
+                    contentDescription = stringResource(if (state.isPlaying) R.string.cd_pause else R.string.cd_play),
                     tint = Color.White,
                     modifier = Modifier.size(32.dp),
                 )
@@ -140,7 +141,7 @@ fun PlaybackControls(
             IconButton(onClick = onPrev, modifier = Modifier.size(48.dp)) {
                 Icon(
                     painter = painterResource(R.drawable.ic_backward),
-                    contentDescription = "Previous",
+                    contentDescription = stringResource(R.string.cd_previous),
                     tint = Color.White,
                     modifier = Modifier.size(28.dp),
                 )
@@ -148,7 +149,7 @@ fun PlaybackControls(
             IconButton(onClick = onNext, modifier = Modifier.size(48.dp)) {
                 Icon(
                     painter = painterResource(R.drawable.ic_forward),
-                    contentDescription = "Next",
+                    contentDescription = stringResource(R.string.cd_next),
                     tint = Color.White,
                     modifier = Modifier.size(28.dp),
                 )
@@ -157,7 +158,7 @@ fun PlaybackControls(
             IconButton(onClick = onRepeat, modifier = Modifier.size(48.dp)) {
                 Icon(
                     painter = painterResource(R.drawable.ic_repeat),
-                    contentDescription = "Repeat",
+                    contentDescription = stringResource(R.string.cd_repeat),
                     tint = if (state.isRepeatOne) Color.White else Color(0xFF737373),
                     modifier = Modifier.size(28.dp),
                 )

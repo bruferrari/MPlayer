@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -171,7 +172,7 @@ private fun RightPane(
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_songs_list),
-                contentDescription = "Queue",
+                contentDescription = stringResource(R.string.cd_queue),
                 tint = Color.White,
                 modifier = Modifier.size(24.dp),
             )
@@ -251,12 +252,12 @@ private fun TopBar(onBack: () -> Unit, onViewAlbum: () -> Unit) {
         IconButton(onClick = onBack) {
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.cd_back),
                 tint = Color.White,
             )
         }
         Text(
-            text = "Now playing",
+            text = stringResource(R.string.title_now_playing),
             style = MaterialTheme.typography.titleMedium,
             color = Color.White,
             modifier = Modifier
@@ -267,7 +268,7 @@ private fun TopBar(onBack: () -> Unit, onViewAlbum: () -> Unit) {
             IconButton(onClick = { menuExpanded = true }) {
                 Icon(
                     imageVector = Icons.Rounded.MoreVert,
-                    contentDescription = "More options",
+                    contentDescription = stringResource(R.string.cd_more_options),
                     tint = Color.White,
                 )
             }
@@ -276,7 +277,7 @@ private fun TopBar(onBack: () -> Unit, onViewAlbum: () -> Unit) {
                 onDismissRequest = { menuExpanded = false },
             ) {
                 DropdownMenuItem(
-                    text = { Text("View album") },
+                    text = { Text(stringResource(R.string.action_view_album)) },
                     onClick = {
                         menuExpanded = false
                         onViewAlbum()
