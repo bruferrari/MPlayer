@@ -1,5 +1,7 @@
 package com.ferrarib.mplayer.core.di
 
+import com.ferrarib.mplayer.data.repository.AlbumRepository
+import com.ferrarib.mplayer.data.repository.AlbumRepositoryImpl
 import com.ferrarib.mplayer.data.repository.RecentlyPlayedRepository
 import com.ferrarib.mplayer.data.repository.RecentlyPlayedRepositoryImpl
 import com.ferrarib.mplayer.data.repository.SongRepository
@@ -21,4 +23,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindRecentlyPlayedRepository(impl: RecentlyPlayedRepositoryImpl): RecentlyPlayedRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAlbumRepository(impl: AlbumRepositoryImpl): AlbumRepository
 }

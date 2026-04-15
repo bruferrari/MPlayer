@@ -1,5 +1,6 @@
 package com.ferrarib.mplayer.core.network
 
+import com.ferrarib.mplayer.data.itunes.dto.LookupResponseDto
 import com.ferrarib.mplayer.data.itunes.dto.SearchResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -13,6 +14,12 @@ interface ItunesApi {
         @Query("limit") limit: Int = PAGE_SIZE,
         @Query("offset") offset: Int = 0
     ): SearchResponseDto
+
+    @GET("lookup")
+    suspend fun lookup(
+        @Query("id") id: Long,
+        @Query("entity") entity: String = "song"
+    ): LookupResponseDto
 
     companion object {
         const val PAGE_SIZE = 25

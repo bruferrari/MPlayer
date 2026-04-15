@@ -54,11 +54,13 @@ fun AppNavHost(windowSizeClass: WindowSizeClass) {
         composable(
             route = AppDestinations.ALBUM_ROUTE,
             arguments = listOf(navArgument(AppDestinations.ARG_COLLECTION_ID) { type = NavType.LongType })
-        ) { backStackEntry ->
-            val collectionId = backStackEntry.arguments?.getLong(AppDestinations.ARG_COLLECTION_ID) ?: 0L
+        ) {
             AlbumScreen(
-                collectionId = collectionId,
+                windowSizeClass = windowSizeClass,
                 onBack = { navController.popBackStack() },
+                onSongClick = { song ->
+                    navController.navigate(AppDestinations.player(song.trackId))
+                },
             )
         }
     }
