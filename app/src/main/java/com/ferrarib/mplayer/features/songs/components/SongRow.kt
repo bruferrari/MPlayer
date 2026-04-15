@@ -54,7 +54,7 @@ fun SongRow(
     ) {
         ArtworkImage(
             url = song.artworkUrl,
-            contentDescription = null,
+            contentDescription = stringResource(R.string.cd_artwork_for, song.trackName),
             modifier = Modifier
                 .size(78.dp)
                 .clip(RoundedCornerShape(12.dp))

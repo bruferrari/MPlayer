@@ -101,7 +101,7 @@ private fun SongListContent(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Rounded.Search,
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.cd_search),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },

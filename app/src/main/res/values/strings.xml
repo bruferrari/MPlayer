@@ -31,4 +31,6 @@
     <string name="cd_previous">Previous</string>
     <string name="cd_next">Next</string>
     <string name="cd_repeat">Repeat</string>
+    <string name="cd_artwork_for">Artwork for %1$s</string>
+    <string name="cd_search">Search</string>
 </resources>

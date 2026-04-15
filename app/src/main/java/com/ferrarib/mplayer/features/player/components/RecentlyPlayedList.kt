@@ -74,7 +74,7 @@ private fun RecentlyPlayedRow(
     ) {
         ArtworkImage(
             url = song.artworkUrl,
-            contentDescription = null,
+            contentDescription = stringResource(R.string.cd_artwork_for, song.trackName),
             modifier = Modifier
                 .size(48.dp)
                 .clip(RoundedCornerShape(8.dp)),
