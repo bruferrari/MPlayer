@@ -72,7 +72,4 @@ Key design decisions:
 ```bash
 # Unit tests
 ./gradlew test
-
-# Instrumented tests
-./gradlew connectedAndroidTest
 ```
