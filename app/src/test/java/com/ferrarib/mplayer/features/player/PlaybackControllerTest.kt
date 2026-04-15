@@ -37,7 +37,7 @@ class PlaybackControllerTest {
         unmockkStatic(MediaItem::class)
     }
 
-    private fun createController() = PlaybackController(player)
+    private fun createController() = PlaybackControllerImpl(player)
 
     private fun song(
         id: Long = 1L,

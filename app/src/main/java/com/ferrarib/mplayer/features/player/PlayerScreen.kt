@@ -23,9 +23,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlin.coroutines.coroutineContext
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
@@ -54,6 +58,15 @@ fun PlayerScreen(
     viewModel: PlayerViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel) { viewModel.startInitialPlaybackIfNeeded() }
+    LaunchedEffect(viewModel) {
+        while (coroutineContext.isActive) {
+            delay(500L)
+            viewModel.tickPosition()
+        }
+    }
+
     val widthClass = windowSizeClass.widthSizeClass
     val isExpanded = widthClass == WindowWidthSizeClass.Expanded
     val isPhone = widthClass == WindowWidthSizeClass.Compact

@@ -7,13 +7,11 @@ import com.ferrarib.mplayer.core.navigation.AppDestinations
 import com.ferrarib.mplayer.data.repository.RecentlyPlayedRepository
 import com.ferrarib.mplayer.domain.model.Song
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class PlayerUiState(
@@ -42,27 +40,18 @@ class PlayerViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), PlayerUiState())
 
-    init {
-        // Wait until the song is available in recently played, then start playback
-        // if not already started by the calling ViewModel (songs/album flow).
-        viewModelScope.launch {
-            val list = recentlyPlayed.observe().first { songs ->
-                songs.any { it.trackId == trackId }
-            }
-            val song = list.first { it.trackId == trackId }
-            if (playback.state.value.currentTrackId != trackId) {
-                playback.playSong(song)
-            }
+    suspend fun startInitialPlaybackIfNeeded() {
+        if (playback.state.value.currentTrackId == trackId) return
+        val list = recentlyPlayed.observe().first { songs ->
+            songs.any { it.trackId == trackId }
         }
-
-        // Poll playback position every 500 ms.
-        viewModelScope.launch {
-            while (true) {
-                delay(500L)
-                playback.tickPosition()
-            }
+        val song = list.first { it.trackId == trackId }
+        if (playback.state.value.currentTrackId != trackId) {
+            playback.playSong(song)
         }
     }
+
+    fun tickPosition() = playback.tickPosition()
 
     fun onPlayPauseClick() = playback.toggle()
 

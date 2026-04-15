@@ -3,6 +3,9 @@ package com.ferrarib.mplayer.core.di
 import android.content.Context
 import androidx.media3.exoplayer.ExoPlayer
 import com.ferrarib.mplayer.data.cache.RecentlyPlayedFile
+import com.ferrarib.mplayer.features.player.PlaybackController
+import com.ferrarib.mplayer.features.player.PlaybackControllerImpl
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,16 +16,23 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object PlayerModule {
+abstract class PlayerModule {
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideExoPlayer(@ApplicationContext context: Context): ExoPlayer =
-        ExoPlayer.Builder(context).build()
+    abstract fun bindPlaybackController(impl: PlaybackControllerImpl): PlaybackController
 
-    @Provides
-    @Singleton
-    @RecentlyPlayedFile
-    fun provideRecentlyPlayedFile(@ApplicationContext context: Context): File =
-        File(context.filesDir, "recently_played.json")
+    companion object {
+
+        @Provides
+        @Singleton
+        fun provideExoPlayer(@ApplicationContext context: Context): ExoPlayer =
+            ExoPlayer.Builder(context).build()
+
+        @Provides
+        @Singleton
+        @RecentlyPlayedFile
+        fun provideRecentlyPlayedFile(@ApplicationContext context: Context): File =
+            File(context.filesDir, "recently_played.json")
+    }
 }
