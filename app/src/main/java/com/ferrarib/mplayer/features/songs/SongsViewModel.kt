@@ -7,6 +7,7 @@ import androidx.paging.cachedIn
 import com.ferrarib.mplayer.data.repository.RecentlyPlayedRepository
 import com.ferrarib.mplayer.data.repository.SongRepository
 import com.ferrarib.mplayer.domain.model.Song
+import com.ferrarib.mplayer.features.player.PlaybackController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -23,6 +24,7 @@ import javax.inject.Inject
 class SongsViewModel @Inject constructor(
     private val repository: SongRepository,
     private val recentlyPlayedRepository: RecentlyPlayedRepository,
+    private val playback: PlaybackController,
 ) : ViewModel() {
 
     private val _query = MutableStateFlow("")
@@ -43,6 +45,8 @@ class SongsViewModel @Inject constructor(
 
     fun onSongTapped(song: Song) {
         recentlyPlayedRepository.add(song)
+        val queue = recentlyPlayedRepository.current
+        playback.playQueue(queue, 0)
     }
 
     companion object {

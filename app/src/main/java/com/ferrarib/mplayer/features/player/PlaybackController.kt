@@ -15,6 +15,7 @@ data class PlaybackState(
     val positionMs: Long = 0L,
     val durationMs: Long = 0L,
     val currentTrackId: Long? = null,
+    val currentSong: Song? = null,
 )
 
 @Singleton
@@ -23,6 +24,9 @@ class PlaybackController @Inject constructor(
 ) {
     private val _state = MutableStateFlow(PlaybackState())
     val state: StateFlow<PlaybackState> = _state
+
+    private var queue: List<Song> = emptyList()
+    private var currentIndex: Int = -1
 
     private val listener = object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -40,12 +44,33 @@ class PlaybackController @Inject constructor(
         player.addListener(listener)
     }
 
+    fun playQueue(songs: List<Song>, startIndex: Int) {
+        if (songs.isEmpty() || startIndex !in songs.indices) return
+        queue = songs
+        currentIndex = startIndex
+        playSong(songs[startIndex])
+    }
+
+    fun next() {
+        if (currentIndex < queue.lastIndex) {
+            currentIndex++
+            playSong(queue[currentIndex])
+        }
+    }
+
+    fun prev() {
+        if (currentIndex > 0) {
+            currentIndex--
+            playSong(queue[currentIndex])
+        }
+    }
+
     fun playSong(song: Song) {
         val url = song.previewUrl ?: return
         player.setMediaItem(MediaItem.fromUri(url))
         player.prepare()
         player.playWhenReady = true
-        _state.update { it.copy(currentTrackId = song.trackId, positionMs = 0L, durationMs = 0L) }
+        _state.update { it.copy(currentTrackId = song.trackId, currentSong = song, positionMs = 0L, durationMs = 0L) }
     }
 
     fun toggle() {

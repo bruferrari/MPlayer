@@ -8,6 +8,7 @@ import com.ferrarib.mplayer.data.repository.AlbumRepository
 import com.ferrarib.mplayer.data.repository.RecentlyPlayedRepository
 import com.ferrarib.mplayer.domain.model.Album
 import com.ferrarib.mplayer.domain.model.Song
+import com.ferrarib.mplayer.features.player.PlaybackController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,6 +27,7 @@ class AlbumViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val albumRepository: AlbumRepository,
     private val recentlyPlayed: RecentlyPlayedRepository,
+    private val playback: PlaybackController,
 ) : ViewModel() {
 
     private val collectionId: Long = checkNotNull(savedStateHandle[AppDestinations.ARG_COLLECTION_ID])
@@ -41,6 +43,9 @@ class AlbumViewModel @Inject constructor(
 
     fun onTrackClick(song: Song) {
         recentlyPlayed.add(song)
+        val album = (uiState.value as? AlbumUiState.Success)?.album ?: return
+        val idx = album.tracks.indexOfFirst { it.trackId == song.trackId }
+        if (idx >= 0) playback.playQueue(album.tracks, idx)
     }
 
     private fun load() {

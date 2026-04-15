@@ -36,22 +36,24 @@ class PlayerViewModel @Inject constructor(
         recentlyPlayed.observe(),
         playback.state,
     ) { songs, state ->
-        val currentId = state.currentTrackId ?: trackId
         PlayerUiState(
-            currentSong = songs.firstOrNull { it.trackId == currentId },
+            currentSong = state.currentSong,
             recentlyPlayed = songs,
             playback = state,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), PlayerUiState())
 
     init {
-        // Wait until the song is available in recently played, then start playback.
+        // Wait until the song is available in recently played, then start playback
+        // if not already started by the calling ViewModel (songs/album flow).
         viewModelScope.launch {
             val list = recentlyPlayed.observe().first { songs ->
                 songs.any { it.trackId == trackId }
             }
             val song = list.first { it.trackId == trackId }
-            playback.playSong(song)
+            if (playback.state.value.currentTrackId != trackId) {
+                playback.playSong(song)
+            }
         }
 
         // Poll playback position every 500 ms.
@@ -67,20 +69,11 @@ class PlayerViewModel @Inject constructor(
 
     fun onRowClick(song: Song) {
         recentlyPlayed.add(song)
-        playback.playSong(song)
+        val queue = recentlyPlayed.current
+        playback.playQueue(queue, 0)
     }
 
-    fun onPrevClick() {
-        val songs = uiState.value.recentlyPlayed
-        val currentId = uiState.value.playback.currentTrackId ?: return
-        val idx = songs.indexOfFirst { it.trackId == currentId }
-        songs.getOrNull(idx + 1)?.let { playback.playSong(it) }
-    }
+    fun onPrevClick() = playback.prev()
 
-    fun onNextClick() {
-        val songs = uiState.value.recentlyPlayed
-        val currentId = uiState.value.playback.currentTrackId ?: return
-        val idx = songs.indexOfFirst { it.trackId == currentId }
-        if (idx > 0) songs.getOrNull(idx - 1)?.let { playback.playSong(it) }
-    }
+    fun onNextClick() = playback.next()
 }

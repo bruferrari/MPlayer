@@ -26,6 +26,8 @@ class RecentlyPlayedRepositoryImpl @Inject constructor(
 
     override fun observe(): Flow<List<Song>> = state.filterNotNull()
 
+    override val current: List<Song> get() = state.value ?: emptyList()
+
     override fun add(song: Song) {
         val base = state.value ?: emptyList()
         val updated = (listOf(song) + base.filter { it.trackId != song.trackId }).take(MAX_ENTRIES)
