@@ -35,7 +35,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ferrarib.mplayer.ui.theme.MPlayerTheme
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ferrarib.mplayer.R
@@ -284,6 +286,79 @@ private fun TopBar(onBack: () -> Unit, onViewAlbum: () -> Unit) {
                     }
                 )
             }
+        }
+    }
+}
+
+private val previewSong = Song(
+    trackId = 1L,
+    trackName = "Bohemian Rhapsody",
+    artistName = "Queen",
+    collectionId = 100L,
+    collectionName = "A Night at the Opera",
+    artworkUrl = "",
+    previewUrl = null,
+    trackTimeMillis = 354000L,
+)
+
+private val previewPlayerUiState = PlayerUiState(
+    currentSong = previewSong,
+    queue = listOf(
+        previewSong,
+        previewSong.copy(trackId = 2L, trackName = "Don't Stop Me Now"),
+        previewSong.copy(trackId = 3L, trackName = "We Will Rock You"),
+    ),
+    playback = PlaybackState(
+        isPlaying = true,
+        positionMs = 120000L,
+        durationMs = 354000L,
+        currentTrackId = 1L,
+        currentSong = previewSong,
+    ),
+)
+
+@Preview(showBackground = true, backgroundColor = 0xFF000000, name = "Player - Phone")
+@Composable
+private fun PlayerCompactPreview() {
+    MPlayerTheme {
+        Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+            CompactLayout(
+                uiState = previewPlayerUiState,
+                isPhone = true,
+                onBack = {},
+                onViewAlbum = {},
+                onPlayPause = {},
+                onPrev = {},
+                onNext = {},
+                onRepeat = {},
+                onSeek = {},
+            )
+        }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFF000000,
+    widthDp = 1280,
+    heightDp = 800,
+    name = "Player - Tablet",
+)
+@Composable
+private fun PlayerExpandedPreview() {
+    MPlayerTheme {
+        Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+            ExpandedLayout(
+                uiState = previewPlayerUiState,
+                onBack = {},
+                onViewAlbum = {},
+                onPlayPause = {},
+                onPrev = {},
+                onNext = {},
+                onRepeat = {},
+                onSeek = {},
+                onRowClick = {},
+            )
         }
     }
 }

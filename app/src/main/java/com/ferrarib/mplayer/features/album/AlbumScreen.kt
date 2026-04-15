@@ -29,16 +29,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import com.ferrarib.mplayer.ui.theme.MPlayerTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import com.ferrarib.mplayer.R
+import com.ferrarib.mplayer.core.ui.ArtworkImage
 import com.ferrarib.mplayer.domain.model.Album
 import com.ferrarib.mplayer.domain.model.Song
 import com.ferrarib.mplayer.features.album.components.TrackRow
@@ -126,10 +127,9 @@ private fun AlbumHeader(album: Album) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 48.dp, bottom = 48.dp)
     ) {
-        AsyncImage(
-            model = album.artworkUrl,
+        ArtworkImage(
+            url = album.artworkUrl,
             contentDescription = album.name,
-            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(110.dp)
                 .clip(RoundedCornerShape(16.dp))
@@ -152,6 +152,58 @@ private fun AlbumHeader(album: Album) {
                 text = album.artist,
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color(0xFF737373),
+            )
+        }
+    }
+}
+
+private val previewSong = Song(
+    trackId = 1L,
+    trackName = "Bohemian Rhapsody",
+    artistName = "Queen",
+    collectionId = 100L,
+    collectionName = "A Night at the Opera",
+    artworkUrl = "",
+    previewUrl = null,
+    trackTimeMillis = 354000L,
+)
+
+private val previewAlbum = Album(
+    collectionId = 100L,
+    name = "A Night at the Opera",
+    artist = "Queen",
+    artworkUrl = "",
+    tracks = listOf(
+        previewSong,
+        previewSong.copy(trackId = 2L, trackName = "Don't Stop Me Now"),
+        previewSong.copy(trackId = 3L, trackName = "We Will Rock You"),
+        previewSong.copy(trackId = 4L, trackName = "Somebody to Love"),
+    ),
+)
+
+@Preview(showBackground = true, backgroundColor = 0xFF000000, name = "Album - Content")
+@Composable
+private fun AlbumContentPreview() {
+    MPlayerTheme {
+        Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+            AlbumContent(
+                album = previewAlbum,
+                onBack = {},
+                onSongClick = {},
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF000000, name = "Album - Error")
+@Composable
+private fun AlbumErrorPreview() {
+    MPlayerTheme {
+        Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+            ErrorContent(
+                message = "Failed to load album",
+                onRetry = {},
+                onBack = {},
             )
         }
     }

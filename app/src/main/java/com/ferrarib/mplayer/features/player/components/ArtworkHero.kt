@@ -6,9 +6,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import com.ferrarib.mplayer.core.ui.ArtworkImage
 
 @Composable
 fun ArtworkHero(
@@ -16,13 +15,12 @@ fun ArtworkHero(
     contentDescription: String?,
     modifier: Modifier = Modifier,
 ) {
-    AsyncImage(
+    ArtworkImage(
+        url = artworkUrl,
+        contentDescription = contentDescription,
         modifier = modifier
             .fillMaxWidth()
             .aspectRatio(1f)
             .clip(RoundedCornerShape(16.dp)),
-        model = artworkUrl,
-        contentDescription = contentDescription,
-        contentScale = ContentScale.Crop
     )
 }

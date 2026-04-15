@@ -26,9 +26,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.PagingData
 import com.ferrarib.mplayer.R
+import com.ferrarib.mplayer.ui.theme.MPlayerTheme
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.flow.flowOf
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -222,5 +226,47 @@ private fun ErrorPrompt(message: String, onRetry: () -> Unit) {
 private fun CenteredProgress(modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator()
+    }
+}
+
+private val previewSongs = listOf(
+    Song(1L, "Bohemian Rhapsody", "Queen", 100L, "A Night at the Opera", "", null, 354000L),
+    Song(2L, "Don't Stop Me Now", "Queen", 100L, "Jazz", "", null, 209000L),
+    Song(3L, "We Will Rock You", "Queen", 100L, "News of the World", "", null, 121000L),
+)
+
+@Preview(showBackground = true, backgroundColor = 0xFF000000, name = "Songs - Empty")
+@Composable
+private fun SongsEmptyPreview() {
+    val songs = flowOf(PagingData.empty<Song>()).collectAsLazyPagingItems()
+    MPlayerTheme {
+        Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+            SongListContent(
+                query = "",
+                songs = songs,
+                recentlyPlayed = emptyList(),
+                onQueryChange = {},
+                onSongClick = {},
+                onViewAlbum = {},
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF000000, name = "Songs - Recently Played")
+@Composable
+private fun SongsRecentlyPlayedPreview() {
+    val songs = flowOf(PagingData.empty<Song>()).collectAsLazyPagingItems()
+    MPlayerTheme {
+        Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+            SongListContent(
+                query = "",
+                songs = songs,
+                recentlyPlayed = previewSongs,
+                onQueryChange = {},
+                onSongClick = {},
+                onViewAlbum = {},
+            )
+        }
     }
 }
