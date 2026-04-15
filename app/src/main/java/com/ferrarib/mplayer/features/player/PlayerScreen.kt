@@ -157,7 +157,7 @@ private fun ExpandedLayout(
                 )
             }
             RecentlyPlayedList(
-                songs = uiState.recentlyPlayed,
+                songs = uiState.queue,
                 currentTrackId = uiState.playback.currentTrackId,
                 onSongClick = onRowClick,
                 modifier = Modifier.fillMaxSize(),

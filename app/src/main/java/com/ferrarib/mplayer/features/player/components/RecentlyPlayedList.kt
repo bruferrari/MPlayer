@@ -40,7 +40,10 @@ fun RecentlyPlayedList(
     val currentIndex = songs.indexOfFirst { it.trackId == currentTrackId }.coerceAtLeast(0)
 
     LaunchedEffect(currentTrackId) {
-        if (songs.isNotEmpty()) listState.animateScrollToItem(currentIndex)
+        if (songs.isNotEmpty() && currentIndex >= 0) {
+            val isVisible = listState.layoutInfo.visibleItemsInfo.any { it.index == currentIndex }
+            if (!isVisible) listState.animateScrollToItem(currentIndex)
+        }
     }
 
     LazyColumn(state = listState, modifier = modifier) {

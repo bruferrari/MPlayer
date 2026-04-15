@@ -17,6 +17,7 @@ data class PlaybackState(
     val currentTrackId: Long? = null,
     val currentSong: Song? = null,
     val isRepeatOne: Boolean = false,
+    val queue: List<Song> = emptyList(),
 )
 
 @Singleton
@@ -53,7 +54,14 @@ class PlaybackController @Inject constructor(
         if (songs.isEmpty() || startIndex !in songs.indices) return
         queue = songs
         currentIndex = startIndex
+        _state.update { it.copy(queue = songs) }
         playSong(songs[startIndex])
+    }
+
+    fun playQueueIndex(index: Int) {
+        if (index !in queue.indices) return
+        currentIndex = index
+        playSong(queue[index])
     }
 
     fun next() {

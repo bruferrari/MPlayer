@@ -10,15 +10,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class PlayerUiState(
     val currentSong: Song? = null,
-    val recentlyPlayed: List<Song> = emptyList(),
+    val queue: List<Song> = emptyList(),
     val playback: PlaybackState = PlaybackState(),
 )
 
@@ -32,16 +32,15 @@ class PlayerViewModel @Inject constructor(
     private val trackId: Long =
         savedStateHandle.get<Long>(AppDestinations.ARG_TRACK_ID) ?: 0L
 
-    val uiState: StateFlow<PlayerUiState> = combine(
-        recentlyPlayed.observe(),
-        playback.state,
-    ) { songs, state ->
-        PlayerUiState(
-            currentSong = state.currentSong,
-            recentlyPlayed = songs,
-            playback = state,
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), PlayerUiState())
+    val uiState: StateFlow<PlayerUiState> = playback.state
+        .map { state ->
+            PlayerUiState(
+                currentSong = state.currentSong,
+                queue = state.queue,
+                playback = state,
+            )
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), PlayerUiState())
 
     init {
         // Wait until the song is available in recently played, then start playback
@@ -68,9 +67,8 @@ class PlayerViewModel @Inject constructor(
     fun onPlayPauseClick() = playback.toggle()
 
     fun onRowClick(song: Song) {
-        recentlyPlayed.add(song)
-        val queue = recentlyPlayed.current
-        playback.playQueue(queue, 0)
+        val idx = playback.state.value.queue.indexOfFirst { it.trackId == song.trackId }
+        if (idx >= 0) playback.playQueueIndex(idx)
     }
 
     fun onPrevClick() = playback.prev()
