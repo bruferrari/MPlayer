@@ -19,7 +19,7 @@ class SongMapperTest {
     )
 
     @Test
-    fun `maps valid DTO to domain Song`() {
+    fun `GIVEN valid DTO WHEN mapped to domain THEN returns correct Song`() {
         val song = validDto.toDomain()!!
         assertEquals(1L, song.trackId)
         assertEquals("Perfect", song.trackName)
@@ -32,17 +32,17 @@ class SongMapperTest {
     }
 
     @Test
-    fun `returns null when trackId is missing`() {
+    fun `GIVEN DTO with missing trackId WHEN mapped to domain THEN returns null`() {
         assertNull(validDto.copy(trackId = null).toDomain())
     }
 
     @Test
-    fun `returns null when trackName is missing`() {
+    fun `GIVEN DTO with missing trackName WHEN mapped to domain THEN returns null`() {
         assertNull(validDto.copy(trackName = null).toDomain())
     }
 
     @Test
-    fun `upgrades artwork URL from 100x100bb to 600x600bb`() {
+    fun `GIVEN artwork URL with 100x100bb WHEN upgradeArtwork called THEN returns 600x600bb URL`() {
         val url = "https://is1-ssl.mzstatic.com/image/thumb/Music/v4/100x100bb.jpg"
         assertEquals(url.replace("100x100bb", "600x600bb"), url.upgradeArtwork())
     }

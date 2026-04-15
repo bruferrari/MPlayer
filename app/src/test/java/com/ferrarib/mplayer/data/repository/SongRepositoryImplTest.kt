@@ -38,7 +38,7 @@ class SongRepositoryImplTest {
     fun tearDown() = server.shutdown()
 
     @Test
-    fun `parses search response into domain Songs`() = kotlinx.coroutines.test.runTest {
+    fun `GIVEN successful search response WHEN pager refreshes THEN returns mapped domain Songs`() = kotlinx.coroutines.test.runTest {
         server.enqueue(
             MockResponse().setBody(
                 """
@@ -69,7 +69,7 @@ class SongRepositoryImplTest {
     }
 
     @Test
-    fun `empty resultCount returns empty page`() = kotlinx.coroutines.test.runTest {
+    fun `GIVEN empty search response WHEN pager refreshes THEN returns empty page`() = kotlinx.coroutines.test.runTest {
         server.enqueue(
             MockResponse().setBody("""{"resultCount":0,"results":[]}""").setResponseCode(200)
         )

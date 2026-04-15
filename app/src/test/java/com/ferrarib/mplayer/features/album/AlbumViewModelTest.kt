@@ -61,7 +61,7 @@ class AlbumViewModelTest {
     }
 
     @Test
-    fun `emits Loading then Success on happy path`() = runTest(dispatcher) {
+    fun `GIVEN successful album load WHEN uiState collected THEN emits Loading then Success`() = runTest(dispatcher) {
         buildViewModel().uiState.test {
             assertEquals(AlbumUiState.Loading, awaitItem())
             val success = awaitItem() as AlbumUiState.Success
@@ -71,7 +71,7 @@ class AlbumViewModelTest {
     }
 
     @Test
-    fun `emits Loading then Error when repository throws`() = runTest(dispatcher) {
+    fun `GIVEN repository throws WHEN uiState collected THEN emits Loading then Error`() = runTest(dispatcher) {
         val repo = FakeAlbumRepository { throw RuntimeException("network error") }
 
         buildViewModel(albumRepo = repo).uiState.test {
@@ -83,7 +83,7 @@ class AlbumViewModelTest {
     }
 
     @Test
-    fun `retry reloads after error`() = runTest(dispatcher) {
+    fun `GIVEN error state WHEN retry called THEN reloads and emits Success`() = runTest(dispatcher) {
         var callCount = 0
         val repo = FakeAlbumRepository {
             if (callCount++ == 0) throw RuntimeException("network error") else album
@@ -104,7 +104,7 @@ class AlbumViewModelTest {
     }
 
     @Test
-    fun `onTrackClick adds song to recently played and starts playback at correct index`() =
+    fun `GIVEN album loaded WHEN onTrackClick called THEN adds to recently played and starts playback at correct index`() =
         runTest(dispatcher) {
             val recentlyPlayed = FakeRecentlyPlayedRepository()
             val playback: PlaybackController = mockk(relaxed = true)
@@ -120,7 +120,7 @@ class AlbumViewModelTest {
         }
 
     @Test
-    fun `onTrackClick does nothing when state is not Success`() = runTest(dispatcher) {
+    fun `GIVEN error state WHEN onTrackClick called THEN does not start playback`() = runTest(dispatcher) {
         val playback: PlaybackController = mockk(relaxed = true)
         val repo = FakeAlbumRepository { throw RuntimeException("error") }
         val vm = buildViewModel(albumRepo = repo, playback = playback)

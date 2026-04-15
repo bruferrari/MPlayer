@@ -34,7 +34,7 @@ class RecentlyPlayedRepositoryImplTest {
     }
 
     @Test
-    fun `observe emits persisted list after init`() = runTest {
+    fun `GIVEN persisted songs WHEN observe called THEN emits stored list`() = runTest {
         val initial = listOf(song(1), song(2))
         val repository = repo(initial)
         repository.observe().test {
@@ -45,7 +45,7 @@ class RecentlyPlayedRepositoryImplTest {
     }
 
     @Test
-    fun `add moves existing song to front without duplicating`() = runTest {
+    fun `GIVEN song already in list WHEN add called THEN moves it to front without duplicating`() = runTest {
         val repository = repo(listOf(song(1), song(2), song(3)))
         repository.observe().test { awaitItem(); cancelAndIgnoreRemainingEvents() }
 
@@ -59,7 +59,7 @@ class RecentlyPlayedRepositoryImplTest {
     }
 
     @Test
-    fun `add new song prepends it`() = runTest {
+    fun `GIVEN new song not in list WHEN add called THEN prepends it`() = runTest {
         val repository = repo(listOf(song(1), song(2)))
         repository.observe().test { awaitItem(); cancelAndIgnoreRemainingEvents() }
 
@@ -74,7 +74,7 @@ class RecentlyPlayedRepositoryImplTest {
     }
 
     @Test
-    fun `caps at 10 entries`() = runTest {
+    fun `GIVEN list at max capacity WHEN add called THEN caps at 10 entries`() = runTest {
         val repository = repo((1L..10L).map { song(it) })
         repository.observe().test { awaitItem(); cancelAndIgnoreRemainingEvents() }
 

@@ -37,7 +37,7 @@ class AlbumRepositoryImplTest {
     fun tearDown() = server.shutdown()
 
     @Test
-    fun `returns Album on successful lookup`() = runTest {
+    fun `GIVEN successful lookup response WHEN getAlbum called THEN returns mapped Album`() = runTest {
         server.enqueue(
             MockResponse().setBody(
                 """
@@ -96,7 +96,7 @@ class AlbumRepositoryImplTest {
     }
 
     @Test
-    fun `throws when response has no collection item`() = runTest {
+    fun `GIVEN empty lookup response WHEN getAlbum called THEN throws exception`() = runTest {
         server.enqueue(
             MockResponse().setBody("""{"resultCount":0,"results":[]}""").setResponseCode(200)
         )

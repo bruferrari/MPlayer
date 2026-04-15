@@ -35,7 +35,7 @@ class AlbumMapperTest {
     )
 
     @Test
-    fun `maps collection and tracks to Album`() {
+    fun `GIVEN collection and track items WHEN toAlbum called THEN returns mapped Album`() {
         val response = LookupResponseDto(
             resultCount = 3,
             results = listOf(
@@ -55,7 +55,7 @@ class AlbumMapperTest {
     }
 
     @Test
-    fun `sorts tracks by trackNumber`() {
+    fun `GIVEN tracks out of order WHEN toAlbum called THEN sorts by trackNumber`() {
         val response = LookupResponseDto(
             resultCount = 3,
             results = listOf(
@@ -70,7 +70,7 @@ class AlbumMapperTest {
     }
 
     @Test
-    fun `returns null when no collection item present`() {
+    fun `GIVEN no collection item WHEN toAlbum called THEN returns null`() {
         val response = LookupResponseDto(
             resultCount = 1,
             results = listOf(trackItem(1L, "Bohemian Rhapsody", 1))
@@ -79,7 +79,7 @@ class AlbumMapperTest {
     }
 
     @Test
-    fun `skips tracks with missing required fields`() {
+    fun `GIVEN tracks with missing required fields WHEN toAlbum called THEN skips invalid tracks`() {
         val trackMissingId = trackItem(1L, "Bohemian Rhapsody", 1).copy(trackId = null)
         val trackMissingName = trackItem(2L, "You're My Best Friend", 2).copy(trackName = null)
         val response = LookupResponseDto(
@@ -91,7 +91,7 @@ class AlbumMapperTest {
     }
 
     @Test
-    fun `returns null when collection is missing collectionId`() {
+    fun `GIVEN collection missing collectionId WHEN toAlbum called THEN returns null`() {
         val response = LookupResponseDto(
             resultCount = 1,
             results = listOf(collectionItem.copy(collectionId = null))
@@ -100,7 +100,7 @@ class AlbumMapperTest {
     }
 
     @Test
-    fun `returns null when collection is missing name`() {
+    fun `GIVEN collection missing name WHEN toAlbum called THEN returns null`() {
         val response = LookupResponseDto(
             resultCount = 1,
             results = listOf(collectionItem.copy(collectionName = null))
@@ -109,7 +109,7 @@ class AlbumMapperTest {
     }
 
     @Test
-    fun `upgrades artwork URL from 100x100bb to 600x600bb`() {
+    fun `GIVEN artwork URL with 100x100bb WHEN toAlbum called THEN upgrades to 600x600bb`() {
         val response = LookupResponseDto(
             resultCount = 1,
             results = listOf(collectionItem)
@@ -119,7 +119,7 @@ class AlbumMapperTest {
     }
 
     @Test
-    fun `empty results returns null`() {
+    fun `GIVEN empty results WHEN toAlbum called THEN returns null`() {
         val response = LookupResponseDto(resultCount = 0, results = emptyList())
         assertNull(response.toAlbum())
     }

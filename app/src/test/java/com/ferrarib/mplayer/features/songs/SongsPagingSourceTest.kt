@@ -31,7 +31,7 @@ class SongsPagingSourceTest {
     }
 
     @Test
-    fun `returns empty page for blank query`() = runTest {
+    fun `GIVEN blank query WHEN pager refreshes THEN returns empty page`() = runTest {
         val pager = TestPager(
             config = PagingConfig(pageSize = 25),
             pagingSource = SongsPagingSource(fakeApi(100), "")
@@ -42,7 +42,7 @@ class SongsPagingSourceTest {
     }
 
     @Test
-    fun `first page loads correctly with nextKey`() = runTest {
+    fun `GIVEN 100 items and page size 25 WHEN first page loaded THEN returns 25 items with nextKey`() = runTest {
         val pager = TestPager(
             config = PagingConfig(pageSize = 25, initialLoadSize = 25),
             pagingSource = SongsPagingSource(fakeApi(100), "test")
@@ -54,7 +54,7 @@ class SongsPagingSourceTest {
     }
 
     @Test
-    fun `last page has null nextKey`() = runTest {
+    fun `GIVEN 10 items and page size 25 WHEN first page loaded THEN returns 10 items with null nextKey`() = runTest {
         val pager = TestPager(
             config = PagingConfig(pageSize = 25, initialLoadSize = 25),
             pagingSource = SongsPagingSource(fakeApi(10), "test")

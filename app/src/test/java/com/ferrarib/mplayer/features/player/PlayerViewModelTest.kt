@@ -50,7 +50,7 @@ class PlayerViewModelTest {
     }
 
     @Test
-    fun `uiState reflects playback state changes`() = runTest(dispatcher) {
+    fun `GIVEN idle playback WHEN playback state changes THEN uiState reflects new state`() = runTest(dispatcher) {
         val vm = buildViewModel()
 
         vm.uiState.test {
@@ -64,64 +64,64 @@ class PlayerViewModelTest {
     }
 
     @Test
-    fun `startInitialPlaybackIfNeeded plays the song from recently played`() = runTest(dispatcher) {
+    fun `GIVEN song in recently played WHEN startInitialPlaybackIfNeeded called THEN plays the song`() = runTest(dispatcher) {
         buildViewModel(trackId = song1.trackId).startInitialPlaybackIfNeeded()
         assertEquals(song1, playback.lastPlayedSong)
     }
 
     @Test
-    fun `startInitialPlaybackIfNeeded skips when song already playing`() = runTest(dispatcher) {
+    fun `GIVEN song already playing WHEN startInitialPlaybackIfNeeded called THEN does not restart playback`() = runTest(dispatcher) {
         playback.setState(PlaybackState(currentTrackId = song1.trackId))
         buildViewModel(trackId = song1.trackId).startInitialPlaybackIfNeeded()
         assertNull(playback.lastPlayedSong)
     }
 
     @Test
-    fun `tickPosition delegates to playback`() = runTest(dispatcher) {
+    fun `GIVEN any state WHEN tickPosition called THEN delegates to playback`() = runTest(dispatcher) {
         buildViewModel().tickPosition()
         assertTrue(playback.tickCalled)
     }
 
     @Test
-    fun `onPrevClick delegates to playback`() = runTest(dispatcher) {
+    fun `GIVEN any state WHEN onPrevClick called THEN delegates to playback`() = runTest(dispatcher) {
         buildViewModel().onPrevClick()
         assertTrue(playback.prevCalled)
     }
 
     @Test
-    fun `onNextClick delegates to playback`() = runTest(dispatcher) {
+    fun `GIVEN any state WHEN onNextClick called THEN delegates to playback`() = runTest(dispatcher) {
         buildViewModel().onNextClick()
         assertTrue(playback.nextCalled)
     }
 
     @Test
-    fun `onPlayPauseClick toggles playback`() = runTest(dispatcher) {
+    fun `GIVEN any state WHEN onPlayPauseClick called THEN toggles playback`() = runTest(dispatcher) {
         buildViewModel().onPlayPauseClick()
         assertTrue(playback.toggleCalled)
     }
 
     @Test
-    fun `onRepeatClick toggles repeat`() = runTest(dispatcher) {
+    fun `GIVEN any state WHEN onRepeatClick called THEN toggles repeat`() = runTest(dispatcher) {
         buildViewModel().onRepeatClick()
         assertTrue(playback.repeatToggled)
     }
 
     @Test
-    fun `onRowClick plays correct queue index`() = runTest(dispatcher) {
+    fun `GIVEN queue with 3 songs WHEN onRowClick with song2 THEN plays at index 1`() = runTest(dispatcher) {
         playback.setState(PlaybackState(queue = listOf(song1, song2, song3)))
         buildViewModel().onRowClick(song2)
         assertEquals(1, playback.lastQueueIndex)
     }
 
     @Test
-    fun `onRowClick does nothing when song not in queue`() = runTest(dispatcher) {
+    fun `GIVEN song not in queue WHEN onRowClick called THEN does not play any index`() = runTest(dispatcher) {
         playback.setState(PlaybackState(queue = listOf(song1)))
         buildViewModel().onRowClick(song3)
         assertNull(playback.lastQueueIndex)
     }
 
     @Test
-    fun `onSeek seeks to fraction of duration`() = runTest(dispatcher) {
+    fun `GIVEN duration 200000 WHEN onSeek with 0_25 THEN seeks to 50000`() = runTest(dispatcher) {
         playback.setState(PlaybackState(durationMs = 200_000L))
         buildViewModel().onSeek(0.25f)
         assertEquals(50_000L, playback.lastSeekTo)

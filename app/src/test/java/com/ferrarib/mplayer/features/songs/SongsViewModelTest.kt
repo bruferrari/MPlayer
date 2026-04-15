@@ -46,19 +46,19 @@ class SongsViewModelTest {
     }
 
     @Test
-    fun `query starts empty`() = runTest(dispatcher) {
+    fun `GIVEN new ViewModel WHEN query accessed THEN value is empty string`() = runTest(dispatcher) {
         assertEquals("", buildViewModel().query.value)
     }
 
     @Test
-    fun `onQueryChange updates query state immediately`() = runTest(dispatcher) {
+    fun `GIVEN any state WHEN onQueryChange called THEN query updates immediately`() = runTest(dispatcher) {
         val vm = buildViewModel()
         vm.onQueryChange("queen")
         assertEquals("queen", vm.query.value)
     }
 
     @Test
-    fun `recentlyPlayed reflects repository`() = runTest(dispatcher) {
+    fun `GIVEN repository with songs WHEN recentlyPlayed collected THEN emits repository list`() = runTest(dispatcher) {
         val repo = FakeRecentlyPlayedRepository(MutableStateFlow(listOf(song1, song2)))
         buildViewModel(recentlyPlayed = repo).recentlyPlayed.test {
             // stateIn emits its initial empty value first.
@@ -69,7 +69,7 @@ class SongsViewModelTest {
     }
 
     @Test
-    fun `recentlyPlayed updates when repository emits new list`() = runTest(dispatcher) {
+    fun `GIVEN reactive repository WHEN repository emits new list THEN recentlyPlayed updates`() = runTest(dispatcher) {
         val flow = MutableStateFlow(listOf(song1))
         val repo = FakeRecentlyPlayedRepository(flow)
         buildViewModel(recentlyPlayed = repo).recentlyPlayed.test {
@@ -82,14 +82,14 @@ class SongsViewModelTest {
     }
 
     @Test
-    fun `onSongTapped adds song to recently played`() = runTest(dispatcher) {
+    fun `GIVEN any state WHEN onSongTapped called THEN adds song to recently played`() = runTest(dispatcher) {
         val repo = FakeRecentlyPlayedRepository()
         buildViewModel(recentlyPlayed = repo).onSongTapped(song1)
         assertEquals(listOf(song1), repo.added)
     }
 
     @Test
-    fun `onSongTapped starts playback with recently played queue`() = runTest(dispatcher) {
+    fun `GIVEN recently played songs WHEN onSongTapped called THEN starts playback with full queue`() = runTest(dispatcher) {
         val repo = FakeRecentlyPlayedRepository(MutableStateFlow(listOf(song1, song2)))
         buildViewModel(recentlyPlayed = repo).onSongTapped(song1)
         assertEquals(listOf(song1, song2), playback.lastQueue)

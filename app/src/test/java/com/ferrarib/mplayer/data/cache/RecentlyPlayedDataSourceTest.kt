@@ -31,19 +31,19 @@ class RecentlyPlayedDataSourceTest {
     )
 
     @Test
-    fun `returns empty list when file does not exist`() {
+    fun `GIVEN no file exists WHEN read called THEN returns empty list`() {
         assertEquals(emptyList<Song>(), dataSource.read())
     }
 
     @Test
-    fun `writes and reads back correctly`() {
+    fun `GIVEN songs written to file WHEN read called THEN returns same songs`() {
         val songs = (1L..5L).map { song(it) }
         dataSource.write(songs)
         assertEquals(songs, dataSource.read())
     }
 
     @Test
-    fun `overwrites on second write`() {
+    fun `GIVEN songs already written WHEN write called again THEN overwrites with new songs`() {
         dataSource.write((1L..5L).map { song(it) })
         val second = listOf(song(99L))
         dataSource.write(second)
