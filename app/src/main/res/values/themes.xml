@@ -2,4 +2,11 @@
 <resources>
 
     <style name="Theme.MPlayer" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.MPlayer.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+        <item name="postSplashScreenTheme">@style/Theme.MPlayer</item>
+    </style>
+
 </resources>

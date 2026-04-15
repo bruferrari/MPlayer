@@ -10,24 +10,14 @@ import androidx.navigation.navArgument
 import com.ferrarib.mplayer.features.album.AlbumScreen
 import com.ferrarib.mplayer.features.player.PlayerScreen
 import com.ferrarib.mplayer.features.songs.SongsScreen
-import com.ferrarib.mplayer.features.splash.SplashScreen
 
 @Composable
 fun AppNavHost(windowSizeClass: WindowSizeClass) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = AppDestinations.SPLASH
+        startDestination = AppDestinations.SONGS
     ) {
-        composable(AppDestinations.SPLASH) {
-            SplashScreen(
-                onReady = {
-                    navController.navigate(AppDestinations.SONGS) {
-                        popUpTo(AppDestinations.SPLASH) { inclusive = true }
-                    }
-                }
-            )
-        }
         composable(AppDestinations.SONGS) {
             SongsScreen(
                 windowSizeClass = windowSizeClass,

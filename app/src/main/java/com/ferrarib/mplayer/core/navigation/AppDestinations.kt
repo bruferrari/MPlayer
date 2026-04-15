@@ -1,7 +1,6 @@
 package com.ferrarib.mplayer.core.navigation
 
 object AppDestinations {
-    const val SPLASH = "splash"
     const val SONGS = "songs"
 
     const val PLAYER_ROUTE = "player/{trackId}"
