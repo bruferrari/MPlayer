@@ -9,9 +9,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.exoplayer.ExoPlayer
 import com.ferrarib.mplayer.core.navigation.AppNavHost
+import com.ferrarib.mplayer.core.ui.DevicePosture
+import com.ferrarib.mplayer.core.ui.devicePostureFlow
 import com.ferrarib.mplayer.ui.theme.MPlayerTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -28,9 +33,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val windowSizeClass = calculateWindowSizeClass(this)
+            val postureFlow = remember { devicePostureFlow(this) }
+            val devicePosture by postureFlow.collectAsStateWithLifecycle(initialValue = DevicePosture.Normal)
             MPlayerTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    AppNavHost(windowSizeClass = windowSizeClass)
+                    AppNavHost(
+                        windowSizeClass = windowSizeClass,
+                        devicePosture = devicePosture,
+                    )
                 }
             }
         }
@@ -38,6 +48,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (isFinishing) exoPlayer.release()
+        if (isFinishing) {
+            exoPlayer.stop()
+            exoPlayer.release()
+        }
     }
 }

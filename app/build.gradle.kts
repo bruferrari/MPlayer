@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.androidx.compose.material3.adaptive.navigation)
     implementation(libs.androidx.compose.material3.window.sizeclass)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.window)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

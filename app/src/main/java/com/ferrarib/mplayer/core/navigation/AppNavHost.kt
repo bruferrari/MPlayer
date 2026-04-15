@@ -7,12 +7,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.ferrarib.mplayer.core.ui.DevicePosture
 import com.ferrarib.mplayer.features.album.AlbumScreen
 import com.ferrarib.mplayer.features.player.PlayerScreen
 import com.ferrarib.mplayer.features.songs.SongsScreen
 
 @Composable
-fun AppNavHost(windowSizeClass: WindowSizeClass) {
+fun AppNavHost(
+    windowSizeClass: WindowSizeClass,
+    devicePosture: DevicePosture = DevicePosture.Normal,
+) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -35,6 +39,7 @@ fun AppNavHost(windowSizeClass: WindowSizeClass) {
         ) {
             PlayerScreen(
                 windowSizeClass = windowSizeClass,
+                devicePosture = devicePosture,
                 onBack = { navController.popBackStack() },
                 onViewAlbum = { collectionId ->
                     navController.navigate(AppDestinations.album(collectionId)) {

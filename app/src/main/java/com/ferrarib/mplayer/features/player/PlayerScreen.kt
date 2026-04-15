@@ -1,6 +1,7 @@
 package com.ferrarib.mplayer.features.player
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
@@ -45,6 +46,7 @@ import com.ferrarib.mplayer.ui.theme.MPlayerTheme
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ferrarib.mplayer.R
+import com.ferrarib.mplayer.core.ui.DevicePosture
 import com.ferrarib.mplayer.domain.model.Song
 import com.ferrarib.mplayer.features.player.components.ArtworkHero
 import com.ferrarib.mplayer.features.player.components.PlaybackControls
@@ -53,6 +55,7 @@ import com.ferrarib.mplayer.features.player.components.RecentlyPlayedList
 @Composable
 fun PlayerScreen(
     windowSizeClass: WindowSizeClass,
+    devicePosture: DevicePosture,
     onBack: () -> Unit,
     onViewAlbum: (collectionId: Long) -> Unit,
     viewModel: PlayerViewModel = hiltViewModel(),
@@ -70,6 +73,7 @@ fun PlayerScreen(
     val widthClass = windowSizeClass.widthSizeClass
     val isExpanded = widthClass == WindowWidthSizeClass.Expanded
     val isPhone = widthClass == WindowWidthSizeClass.Compact
+    val isTableTop = devicePosture is DevicePosture.TableTop
     val collectionId = uiState.currentSong?.collectionId ?: 0L
 
     Box(
@@ -78,8 +82,18 @@ fun PlayerScreen(
             .background(Color.Black)
             .safeDrawingPadding()
     ) {
-        if (isExpanded) {
-            ExpandedLayout(
+        when {
+            isTableTop -> TableTopLayout(
+                uiState = uiState,
+                onBack = onBack,
+                onViewAlbum = { onViewAlbum(collectionId) },
+                onPlayPause = viewModel::onPlayPauseClick,
+                onPrev = viewModel::onPrevClick,
+                onNext = viewModel::onNextClick,
+                onRepeat = viewModel::onRepeatClick,
+                onSeek = viewModel::onSeek,
+            )
+            isExpanded -> ExpandedLayout(
                 uiState = uiState,
                 onBack = onBack,
                 onViewAlbum = { onViewAlbum(collectionId) },
@@ -90,8 +104,7 @@ fun PlayerScreen(
                 onSeek = viewModel::onSeek,
                 onRowClick = viewModel::onRowClick,
             )
-        } else {
-            CompactLayout(
+            else -> CompactLayout(
                 uiState = uiState,
                 isPhone = isPhone,
                 onBack = onBack,
@@ -101,6 +114,63 @@ fun PlayerScreen(
                 onNext = viewModel::onNextClick,
                 onRepeat = viewModel::onRepeatClick,
                 onSeek = viewModel::onSeek,
+            )
+        }
+    }
+}
+
+// Tabletop posture (Galaxy Fold / Pixel Fold half-opened, horizontal hinge):
+// artwork lives on the upper half (the "screen"), metadata + controls live on
+// the lower half (the "keyboard"), mirroring how a laptop is held.
+@Composable
+private fun TableTopLayout(
+    uiState: PlayerUiState,
+    onBack: () -> Unit,
+    onViewAlbum: () -> Unit,
+    onPlayPause: () -> Unit,
+    onPrev: () -> Unit,
+    onNext: () -> Unit,
+    onRepeat: () -> Unit,
+    onSeek: (Float) -> Unit,
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 16.dp),
+        ) {
+            TopBar(onBack = onBack, onViewAlbum = onViewAlbum)
+            Box(
+                modifier = Modifier.weight(1f).fillMaxWidth(),
+                contentAlignment = Alignment.Center,
+            ) {
+                ArtworkHero(
+                    artworkUrl = uiState.currentSong?.artworkUrl ?: "",
+                    contentDescription = uiState.currentSong?.trackName,
+                    modifier = Modifier.fillMaxWidth(0.4f),
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 24.dp),
+            verticalArrangement = Arrangement.Bottom,
+        ) {
+            SongMetadata(
+                trackName = uiState.currentSong?.trackName ?: "",
+                artistName = uiState.currentSong?.artistName ?: "",
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            PlaybackControls(
+                state = uiState.playback,
+                onPlayPause = onPlayPause,
+                onPrev = onPrev,
+                onNext = onNext,
+                onRepeat = onRepeat,
+                onSeek = onSeek,
             )
         }
     }
@@ -371,6 +441,31 @@ private fun PlayerExpandedPreview() {
                 onRepeat = {},
                 onSeek = {},
                 onRowClick = {},
+            )
+        }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFF000000,
+    widthDp = 840,
+    heightDp = 1100,
+    name = "Player - Foldable TableTop",
+)
+@Composable
+private fun PlayerTableTopPreview() {
+    MPlayerTheme {
+        Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+            TableTopLayout(
+                uiState = previewPlayerUiState,
+                onBack = {},
+                onViewAlbum = {},
+                onPlayPause = {},
+                onPrev = {},
+                onNext = {},
+                onRepeat = {},
+                onSeek = {},
             )
         }
     }
