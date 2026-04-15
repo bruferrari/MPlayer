@@ -4,7 +4,31 @@ An Android music preview player built with modern Android development practices,
 
 ## Screenshots
 
-<!-- Add screenshots here -->
+### Phone
+| Songs | Player | Album |
+|---|---|---|
+| ![](screenshots/phone_songs_recently_played.png) | ![](screenshots/phone_player.png) | ![](screenshots/phone_album_1.png) |
+| ![](screenshots/phone_songs_search_results.png) | | ![](screenshots/phone_album_2.png) |
+| ![](screenshots/phone_songs_no_results.png) | | |
+
+### Tablet
+| Songs | Player |
+|---|---|
+| ![](screenshots/tablet_songs_recently_played.png) | ![](screenshots/tablet_player_with_queue.png) |
+| ![](screenshots/tablet_songs_search_results.png) | |
+| ![](screenshots/tablet_songs_no_results.png) | |
+
+### Foldable
+| Songs | Player | Album |
+|---|---|---|
+| ![](screenshots/foldable_songs_recently_played.png) | ![](screenshots/foldable_player_with_queue.png) | ![](screenshots/foldable_album.png) |
+| ![](screenshots/foldable_songs_search_results.png) | ![](screenshots/foldable_player.png) | |
+| ![](screenshots/foldable_songs_no_results.png) | | |
+
+### Splash
+| Phone | Tablet |
+|---|---|
+| ![](screenshots/splash_phone_1.png) | ![](screenshots/splash_tablet.png) |
 
 ## Features
 
