@@ -37,7 +37,9 @@ fun AppNavHost(windowSizeClass: WindowSizeClass) {
                 windowSizeClass = windowSizeClass,
                 onBack = { navController.popBackStack() },
                 onViewAlbum = { collectionId ->
-                    navController.navigate(AppDestinations.album(collectionId))
+                    navController.navigate(AppDestinations.album(collectionId)) {
+                        popUpTo(AppDestinations.PLAYER_ROUTE) { inclusive = true }
+                    }
                 },
             )
         }
