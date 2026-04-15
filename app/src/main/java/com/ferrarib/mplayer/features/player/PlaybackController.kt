@@ -16,6 +16,7 @@ data class PlaybackState(
     val durationMs: Long = 0L,
     val currentTrackId: Long? = null,
     val currentSong: Song? = null,
+    val isRepeatOne: Boolean = false,
 )
 
 @Singleton
@@ -34,8 +35,12 @@ class PlaybackController @Inject constructor(
         }
 
         override fun onPlaybackStateChanged(playbackState: Int) {
-            if (playbackState == Player.STATE_READY) {
-                _state.update { it.copy(durationMs = player.duration.coerceAtLeast(0L)) }
+            when (playbackState) {
+                Player.STATE_READY -> _state.update { it.copy(durationMs = player.duration.coerceAtLeast(0L)) }
+                Player.STATE_ENDED -> if (_state.value.isRepeatOne) {
+                    player.seekTo(0)
+                    player.play()
+                }
             }
         }
     }
@@ -79,6 +84,10 @@ class PlaybackController @Inject constructor(
 
     fun tickPosition() {
         _state.update { it.copy(positionMs = player.currentPosition.coerceAtLeast(0L)) }
+    }
+
+    fun toggleRepeat() {
+        _state.update { it.copy(isRepeatOne = !it.isRepeatOne) }
     }
 
     fun release() {

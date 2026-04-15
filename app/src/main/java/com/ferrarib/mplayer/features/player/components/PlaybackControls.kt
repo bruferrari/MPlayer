@@ -30,6 +30,7 @@ fun PlaybackControls(
     onPlayPause: () -> Unit,
     onPrev: () -> Unit,
     onNext: () -> Unit,
+    onRepeat: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -97,11 +98,11 @@ fun PlaybackControls(
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = {}, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onRepeat, modifier = Modifier.size(48.dp)) {
                 Icon(
                     painter = painterResource(R.drawable.ic_repeat),
                     contentDescription = "Repeat",
-                    tint = Color.White,
+                    tint = if (state.isRepeatOne) Color.White else Color(0xFF737373),
                     modifier = Modifier.size(28.dp),
                 )
             }
@@ -116,7 +117,8 @@ private fun PlaybackControlsPreview() {
         state = PlaybackState(),
         onPlayPause = {},
         onPrev = {},
-        onNext = {}
+        onNext = {},
+        onRepeat = {},
     )
 }
 

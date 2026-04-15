@@ -76,4 +76,6 @@ class PlayerViewModel @Inject constructor(
     fun onPrevClick() = playback.prev()
 
     fun onNextClick() = playback.next()
+
+    fun onRepeatClick() = playback.toggleRepeat()
 }

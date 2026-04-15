@@ -66,6 +66,7 @@ fun PlayerScreen(
                 onPlayPause = viewModel::onPlayPauseClick,
                 onPrev = viewModel::onPrevClick,
                 onNext = viewModel::onNextClick,
+                onRepeat = viewModel::onRepeatClick,
                 onRowClick = viewModel::onRowClick,
             )
         } else {
@@ -77,6 +78,7 @@ fun PlayerScreen(
                 onPlayPause = viewModel::onPlayPauseClick,
                 onPrev = viewModel::onPrevClick,
                 onNext = viewModel::onNextClick,
+                onRepeat = viewModel::onRepeatClick,
             )
         }
     }
@@ -90,6 +92,7 @@ private fun ExpandedLayout(
     onPlayPause: () -> Unit,
     onPrev: () -> Unit,
     onNext: () -> Unit,
+    onRepeat: () -> Unit,
     onRowClick: (Song) -> Unit,
 ) {
     Row(modifier = Modifier.fillMaxSize()) {
@@ -125,6 +128,7 @@ private fun ExpandedLayout(
                 onPlayPause = onPlayPause,
                 onPrev = onPrev,
                 onNext = onNext,
+                onRepeat = onRepeat,
             )
         }
 
@@ -167,6 +171,7 @@ private fun CompactLayout(
     onPlayPause: () -> Unit,
     onPrev: () -> Unit,
     onNext: () -> Unit,
+    onRepeat: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -205,6 +210,7 @@ private fun CompactLayout(
             onPlayPause = onPlayPause,
             onPrev = onPrev,
             onNext = onNext,
+            onRepeat = onRepeat,
         )
     }
 }
