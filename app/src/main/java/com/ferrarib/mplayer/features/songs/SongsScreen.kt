@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,8 +22,11 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
@@ -39,7 +44,13 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.ferrarib.mplayer.domain.model.Song
+import com.ferrarib.mplayer.features.player.PlaybackState
+import com.ferrarib.mplayer.features.songs.components.MiniPlayerBottomBar
+import com.ferrarib.mplayer.features.songs.components.MiniPlayerSidePanel
 import com.ferrarib.mplayer.features.songs.components.SongRow
+import kotlin.coroutines.coroutineContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 
 @Composable
 @Suppress("UNUSED_PARAMETER")
@@ -47,11 +58,26 @@ fun SongsScreen(
     windowSizeClass: WindowSizeClass,
     onSongClick: (Song) -> Unit,
     onViewAlbum: (Song) -> Unit,
+    onOpenPlayer: (trackId: Long) -> Unit,
     viewModel: SongsViewModel = hiltViewModel()
 ) {
     val query by viewModel.query.collectAsStateWithLifecycle()
     val songs = viewModel.pagingData.collectAsLazyPagingItems()
     val recentlyPlayed by viewModel.recentlyPlayed.collectAsStateWithLifecycle()
+    val playback by viewModel.playback.collectAsStateWithLifecycle()
+    val isExpanded = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded
+
+    val handleSongClick = remember(viewModel, onSongClick) {
+        { song: Song -> viewModel.onSongTapped(song); onSongClick(song) }
+    }
+
+    LaunchedEffect(playback.currentTrackId) {
+        if (playback.currentTrackId == null) return@LaunchedEffect
+        while (coroutineContext.isActive) {
+            delay(500L)
+            viewModel.tickPosition()
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -59,17 +85,53 @@ fun SongsScreen(
             .background(Color.Black)
             .safeDrawingPadding()
     ) {
-        SongListContent(
-            query = query,
-            songs = songs,
-            recentlyPlayed = recentlyPlayed,
-            onQueryChange = viewModel::onQueryChange,
-            onSongClick = { song ->
-                viewModel.onSongTapped(song)
-                onSongClick(song)
-            },
-            onViewAlbum = onViewAlbum,
-        )
+        if (isExpanded) {
+            Row(modifier = Modifier.fillMaxSize()) {
+                SongListContent(
+                    query = query,
+                    songs = songs,
+                    recentlyPlayed = recentlyPlayed,
+                    onQueryChange = viewModel::onQueryChange,
+                    onSongClick = handleSongClick,
+                    onViewAlbum = onViewAlbum,
+                    modifier = Modifier.weight(1f).fillMaxHeight(),
+                )
+                if (playback.currentSong != null) {
+                    MiniPlayerSidePanel(
+                        state = playback,
+                        onTap = { playback.currentTrackId?.let(onOpenPlayer) },
+                        onPlayPause = viewModel::onMiniPlayPause,
+                        onPrev = viewModel::onMiniPrev,
+                        onNext = viewModel::onMiniNext,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(top = 16.dp, end = 20.dp, bottom = 16.dp)
+                            .weight(0.30f),
+                    )
+                }
+            }
+        } else {
+            Column(modifier = Modifier.fillMaxSize()) {
+                SongListContent(
+                    query = query,
+                    songs = songs,
+                    recentlyPlayed = recentlyPlayed,
+                    onQueryChange = viewModel::onQueryChange,
+                    onSongClick = handleSongClick,
+                    onViewAlbum = onViewAlbum,
+                    modifier = Modifier.weight(1f),
+                )
+                if (playback.currentSong != null) {
+                    MiniPlayerBottomBar(
+                        state = playback,
+                        onTap = { playback.currentTrackId?.let(onOpenPlayer) },
+                        onPlayPause = viewModel::onMiniPlayPause,
+                        onPrev = viewModel::onMiniPrev,
+                        onNext = viewModel::onMiniNext,
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -81,8 +143,9 @@ private fun SongListContent(
     onQueryChange: (String) -> Unit,
     onSongClick: (Song) -> Unit,
     onViewAlbum: (Song) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = modifier.fillMaxSize()) {
         Text(
             text = stringResource(R.string.title_songs),
             style = MaterialTheme.typography.headlineLarge,
@@ -235,6 +298,14 @@ private val previewSongs = listOf(
     Song(3L, "We Will Rock You", "Queen", 100L, "News of the World", "", null, 121000L),
 )
 
+private val previewPlaybackActive = PlaybackState(
+    isPlaying = true,
+    currentSong = previewSongs[0],
+    currentTrackId = 1L,
+    positionMs = 90_000L,
+    durationMs = 354_000L,
+)
+
 @Preview(showBackground = true, backgroundColor = 0xFF000000, name = "Songs - Empty")
 @Composable
 private fun SongsEmptyPreview() {
@@ -267,6 +338,72 @@ private fun SongsRecentlyPlayedPreview() {
                 onSongClick = {},
                 onViewAlbum = {},
             )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF000000, name = "Songs - Mini Player (Phone)")
+@Composable
+private fun SongsWithMiniPlayerPhonePreview() {
+    val songs = flowOf(PagingData.empty<Song>()).collectAsLazyPagingItems()
+    MPlayerTheme {
+        Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                SongListContent(
+                    query = "",
+                    songs = songs,
+                    recentlyPlayed = previewSongs,
+                    onQueryChange = {},
+                    onSongClick = {},
+                    onViewAlbum = {},
+                    modifier = Modifier.weight(1f),
+                )
+                MiniPlayerBottomBar(
+                    state = previewPlaybackActive,
+                    onTap = {},
+                    onPlayPause = {},
+                    onPrev = {},
+                    onNext = {},
+                )
+            }
+        }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFF000000,
+    widthDp = 1280,
+    heightDp = 800,
+    name = "Songs - Mini Player (Tablet)",
+)
+@Composable
+private fun SongsWithMiniPlayerTabletPreview() {
+    val songs = flowOf(PagingData.empty<Song>()).collectAsLazyPagingItems()
+    MPlayerTheme {
+        Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+            Row(modifier = Modifier.fillMaxSize()) {
+                SongListContent(
+                    query = "",
+                    songs = songs,
+                    recentlyPlayed = previewSongs,
+                    onQueryChange = {},
+                    onSongClick = {},
+                    onViewAlbum = {},
+                    modifier = Modifier.weight(1f).fillMaxHeight(),
+                )
+                MiniPlayerSidePanel(
+                    state = previewPlaybackActive,
+                    onTap = {},
+                    onPlayPause = {},
+                    onPrev = {},
+                    onNext = {},
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(top = 16.dp, end = 20.dp, bottom = 16.dp)
+                        .weight(0.30f),
+                )
+            }
         }
     }
 }

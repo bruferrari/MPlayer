@@ -8,6 +8,7 @@ import com.ferrarib.mplayer.data.repository.RecentlyPlayedRepository
 import com.ferrarib.mplayer.data.repository.SongRepository
 import com.ferrarib.mplayer.domain.model.Song
 import com.ferrarib.mplayer.features.player.PlaybackController
+import com.ferrarib.mplayer.features.player.PlaybackState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -24,7 +25,7 @@ import javax.inject.Inject
 class SongsViewModel @Inject constructor(
     private val repository: SongRepository,
     private val recentlyPlayedRepository: RecentlyPlayedRepository,
-    private val playback: PlaybackController,
+    private val playbackController: PlaybackController,
 ) : ViewModel() {
 
     private val _query = MutableStateFlow("")
@@ -39,6 +40,9 @@ class SongsViewModel @Inject constructor(
     val recentlyPlayed: StateFlow<List<Song>> = recentlyPlayedRepository.observe()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
+    val playback: StateFlow<PlaybackState> = playbackController.state
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), PlaybackState())
+
     fun onQueryChange(query: String) {
         _query.value = query
     }
@@ -46,8 +50,13 @@ class SongsViewModel @Inject constructor(
     fun onSongTapped(song: Song) {
         recentlyPlayedRepository.add(song)
         val queue = recentlyPlayedRepository.current
-        playback.playQueue(queue, 0)
+        playbackController.playQueue(queue, 0)
     }
+
+    fun onMiniPlayPause() = playbackController.toggle()
+    fun onMiniNext() = playbackController.next()
+    fun onMiniPrev() = playbackController.prev()
+    fun tickPosition() = playbackController.tickPosition()
 
     companion object {
         private const val DEBOUNCE_MS = 300L
