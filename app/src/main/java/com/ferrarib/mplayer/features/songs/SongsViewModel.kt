@@ -41,7 +41,6 @@ class SongsViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     val playback: StateFlow<PlaybackState> = playbackController.state
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), PlaybackState())
 
     fun onQueryChange(query: String) {
         _query.value = query

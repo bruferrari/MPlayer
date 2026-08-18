@@ -78,9 +78,9 @@ fun MiniPlayerBottomBar(
                 onPlayPause = onPlayPause,
                 onPrev = onPrev,
                 onNext = onNext,
-                playButtonSize = 44,
+                playButtonSize = 48,
                 playIconSize = 24,
-                navButtonSize = 40,
+                navButtonSize = 48,
                 navIconSize = 22,
             )
         }
@@ -134,7 +134,7 @@ fun MiniPlayerSidePanel(
             onNext = onNext,
             playButtonSize = 56,
             playIconSize = 28,
-            navButtonSize = 44,
+            navButtonSize = 48,
             navIconSize = 24,
         )
     }
