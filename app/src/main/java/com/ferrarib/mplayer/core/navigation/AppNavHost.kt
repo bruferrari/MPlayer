@@ -30,7 +30,10 @@ fun AppNavHost(
                 },
                 onViewAlbum = { song ->
                     navController.navigate(AppDestinations.album(song.collectionId))
-                }
+                },
+                onOpenPlayer = { trackId ->
+                    navController.navigate(AppDestinations.player(trackId))
+                },
             )
         }
         composable(
