@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -52,8 +53,9 @@ import kotlin.coroutines.coroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 
+private val MiniPlayerSidePanelWidth = 280.dp
+
 @Composable
-@Suppress("UNUSED_PARAMETER")
 fun SongsScreen(
     windowSizeClass: WindowSizeClass,
     onSongClick: (Song) -> Unit,
@@ -104,9 +106,9 @@ fun SongsScreen(
                         onPrev = viewModel::onMiniPrev,
                         onNext = viewModel::onMiniNext,
                         modifier = Modifier
+                            .width(MiniPlayerSidePanelWidth)
                             .fillMaxHeight()
-                            .padding(top = 16.dp, end = 20.dp, bottom = 16.dp)
-                            .weight(0.30f),
+                            .padding(top = 16.dp, end = 20.dp, bottom = 16.dp),
                     )
                 }
             }
@@ -399,9 +401,9 @@ private fun SongsWithMiniPlayerTabletPreview() {
                     onPrev = {},
                     onNext = {},
                     modifier = Modifier
+                        .width(MiniPlayerSidePanelWidth)
                         .fillMaxHeight()
-                        .padding(top = 16.dp, end = 20.dp, bottom = 16.dp)
-                        .weight(0.30f),
+                        .padding(top = 16.dp, end = 20.dp, bottom = 16.dp),
                 )
             }
         }

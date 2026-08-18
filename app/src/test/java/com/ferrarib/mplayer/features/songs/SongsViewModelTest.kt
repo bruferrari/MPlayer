@@ -6,6 +6,7 @@ import com.ferrarib.mplayer.data.repository.RecentlyPlayedRepository
 import com.ferrarib.mplayer.data.repository.SongRepository
 import com.ferrarib.mplayer.domain.model.Song
 import com.ferrarib.mplayer.features.player.FakePlaybackController
+import com.ferrarib.mplayer.features.player.PlaybackState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +18,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -28,7 +30,7 @@ class SongsViewModelTest {
     private val song1 = Song(1L, "Bohemian Rhapsody", "Queen", 100L, "A Night at the Opera", "", null, 354000L)
     private val song2 = Song(2L, "Perfect", "Ed Sheeran", 200L, "Divide", "", null, 263000L)
 
-    private val playback = FakePlaybackController()
+    private lateinit var playback: FakePlaybackController
 
     private fun buildViewModel(
         songRepo: SongRepository = FakeSongRepository(),
@@ -38,6 +40,7 @@ class SongsViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
+        playback = FakePlaybackController()
     }
 
     @After
@@ -94,6 +97,46 @@ class SongsViewModelTest {
         buildViewModel(recentlyPlayed = repo).onSongTapped(song1)
         assertEquals(listOf(song1, song2), playback.lastQueue)
         assertEquals(0, playback.lastQueueStartIndex)
+    }
+
+    @Test
+    fun `GIVEN playback state WHEN ViewModel created THEN playback exposes current state immediately`() = runTest(dispatcher) {
+        val expected = PlaybackState(
+            isPlaying = true,
+            currentSong = song1,
+            currentTrackId = song1.trackId,
+        )
+        playback.setState(expected)
+
+        assertEquals(expected, buildViewModel().playback.value)
+    }
+
+    @Test
+    fun `GIVEN any state WHEN onMiniPlayPause called THEN toggles playback`() = runTest(dispatcher) {
+        buildViewModel().onMiniPlayPause()
+
+        assertTrue(playback.toggleCalled)
+    }
+
+    @Test
+    fun `GIVEN any state WHEN onMiniNext called THEN advances playback`() = runTest(dispatcher) {
+        buildViewModel().onMiniNext()
+
+        assertTrue(playback.nextCalled)
+    }
+
+    @Test
+    fun `GIVEN any state WHEN onMiniPrev called THEN rewinds playback`() = runTest(dispatcher) {
+        buildViewModel().onMiniPrev()
+
+        assertTrue(playback.prevCalled)
+    }
+
+    @Test
+    fun `GIVEN any state WHEN tickPosition called THEN updates playback position`() = runTest(dispatcher) {
+        buildViewModel().tickPosition()
+
+        assertTrue(playback.tickCalled)
     }
 }
 
